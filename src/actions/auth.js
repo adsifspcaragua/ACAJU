@@ -149,12 +149,19 @@ export async function changePasswordAction(prevState, formData) {
 }
 
 export async function logout() {
-  const adminId = await getSessionUserId();
+  try {
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get('session')?.value;
+    const session = sessionToken ? await decrypt(sessionToken) : null;
 
-  if (adminId) {
-    await logAdminAction(adminId, 'LOGOUT');
+    if (session?.userId) {
+      await logAdminAction(session.userId, 'LOGOUT');
+    }
+  } catch (err) {
+    console.error('Erro ao registrar log de logout:', err);
   }
 
-  await deleteSession()
-  redirect('/admin/login')
+  // Destrói a sessão e manda para o login
+  await deleteSession();
+  redirect('/admin/login');
 }
