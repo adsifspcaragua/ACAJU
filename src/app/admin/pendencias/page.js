@@ -1,7 +1,9 @@
 "use client";
-import Link from "next/link";
-import React from "react";
+
+import React, { useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
+import CardPendencia from "../../../components/CardPendencia";
+import ModalAnalisePublicacao from "../../../components/ModalAnalisePublicacao";
 import '@/app/admin/page.admin.css';
 
 const pendencias = [
@@ -11,25 +13,39 @@ const pendencias = [
     status: "AGUARDANDO",
     titulo: "Mutirão de Limpeza no Rio Juqueriquerê",
     autor: "Editor João",
-    data: "10/10/2026"
+    data: "10/10/2026",
+    descricao: "Iniciativa comunitária para remoção de resíduos das margens do rio."
   },
   {
     id: 2,
-    tipo: "MUTIRÃO",
+    tipo: "PROJETO",
     status: "AGUARDANDO",
     titulo: "Reflorestamento de Restinga",
     autor: "Editora Maria",
-    data: "11/10/2026"
+    data: "11/10/2026",
+    descricao: "Plantio de mudas nativas na orla da praia."
   }
 ];
 
 export default function Pendencias() {
+  const [itemSelecionado, setItemSelecionado] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAbrirAnalise = (item) => {
+    setItemSelecionado(item);
+    setIsModalOpen(true);
+  };
+
+  const handleFecharAnalise = () => {
+    setIsModalOpen(false);
+    setItemSelecionado(null);
+  };
+
   return (
     <div style={styles.container}>
       <SideBarAdmin />
 
       <main style={styles.mainContent}>
-
         <div style={styles.headerContainer}>
           <div style={styles.header}>
             <h1 style={styles.pageTitle}>Pendências</h1>
@@ -39,34 +55,19 @@ export default function Pendencias() {
 
         <div style={styles.listContainer}>
           {pendencias.map((item) => (
-            <div key={item.id} style={styles.card}>
-              
-              <div style={styles.infoContainer}>
-                <span style={styles.categoryBadge}>
-                  {item.tipo} ({item.status})
-                </span>
-                <h2 style={styles.itemTitle}>{item.titulo}</h2>
-                <span style={styles.metaText}>
-                  Enviado por: {item.autor} em {item.data}
-                </span>
-              </div>
-
-              <Link
-                href="/admin/pendencias/analisePublicacao"
-                style={{
-                  ...styles.actionButton,
-                  textDecoration: "none",
-                  display: "inline-block",
-                  textAlign: "center"
-                }}
-              >
-                Analisar publicação
-              </Link>
-
-            </div>
+            <CardPendencia 
+              key={item.id} 
+              item={item} 
+              onAnalisar={() => handleAbrirAnalise(item)} 
+            />
           ))}
         </div>
 
+        <ModalAnalisePublicacao 
+          isOpen={isModalOpen}
+          onClose={handleFecharAnalise}
+          item={itemSelecionado}
+        />
       </main>
     </div>
   );
@@ -128,52 +129,5 @@ const styles = {
     width: "100%",
     maxWidth: "950px",
     boxSizing: "border-box",
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: "12px",
-    padding: "24px 32px",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
-    border: "2px solid #facc15", // Borda amarela conforme a imagem
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    boxSizing: "border-box",
-  },
-  infoContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-  categoryBadge: {
-    fontSize: "11px",
-    fontWeight: "bold",
-    color: "#6b7280",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-  },
-  itemTitle: {
-    fontSize: "20px",
-    fontWeight: "bold",
-    color: "#1f2937",
-    margin: 0,
-  },
-  metaText: {
-    fontSize: "13px",
-    color: "#9ca3af",
-  },
-  actionButton: {
-    backgroundColor: "#085747",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: "6px",
-    padding: "12px 24px",
-    fontSize: "13px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-    fontFamily: "inherit",
-    whiteSpace: "nowrap",
   },
 };

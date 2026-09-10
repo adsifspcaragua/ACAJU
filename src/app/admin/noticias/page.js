@@ -3,18 +3,31 @@
 import React, { useState, useEffect } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import AdminEditor from "@/components/AdminEditor";
-import GaleriaUpload from "@/components/GaleriaUpload"; 
-import CapaUpload from "@/components/CapaUpload"; // <--- Novo componente importado
+import GaleriaUpload from "@/components/GaleriaUpload";
+import CapaUpload from "@/components/CapaUpload";
 import '@/app/admin/page.admin.css';
 
+import { useActionState } from 'react';
+import { postNewsActions } from '@/actions/admActions';
+
 export default function PublicarNoticia() {
+  const [state, formAction, isPending] = useActionState(postNewsActions, null);
+  const [editorContent, setEditorContent] = useState('');
+  const [galeriaFotos, setGaleriaFotos] = useState([]);
   const [solicitarAnalise, setSolicitarAnalise] = useState(false);
-  const [imagemCapa, setImagemCapa] = useState(null); // Guarda o arquivo selecionado
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Intercepta a submissão para anexar os arquivos de fotos adicionais
+  const handleSubmitWithFiles = (formData) => {
+    galeriaFotos.forEach((file) => {
+      formData.append('galleryImages', file);
+    });
+    formAction(formData);
+  };
 
   return (
     <div style={styles.container}>
@@ -28,58 +41,85 @@ export default function PublicarNoticia() {
           </div>
         </div>
 
-        <form style={styles.card} onSubmit={(e) => e.preventDefault()}>
-          
+        <form style={styles.card} action={handleSubmitWithFiles}>
+
+          {/* Feedback de erro retornado pela Action */}
+          {state?.error && (
+            <div style={styles.errorAlert}>
+              {state.error}
+            </div>
+          )}
+
+          {/* TÍTULO */}
           <div style={styles.inputGroupFull}>
             <label style={styles.label}>TÍTULO DA NOTÍCIA</label>
-            <input 
-              type="text" 
-              placeholder="Ex: Resultado do último mutirão..." 
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Ex: Resultado do último mutirão..."
               style={styles.input}
+              required
             />
+            {state?.errors?.title && (
+              <span style={styles.errorText}>{state.errors.title}</span>
+            )}
           </div>
 
+          {/* CONTEÚDO PRINCIPAL */}
           <div style={styles.inputGroupFull}>
             <label style={styles.label}>CONTEÚDO PRINCIPAL</label>
-            <AdminEditor />
+            <AdminEditor onChange={(html) => setEditorContent(html)} />
+            <input
+              type="hidden"
+              name="content"
+              value={editorContent}
+            />
+            {state?.errors?.content && (
+              <span style={styles.errorText}>{state.errors.content}</span>
+            )}
           </div>
 
+          {/* ROW: CAPA E VÍDEO */}
           <div style={styles.row}>
-            {/* NOVO COMPONENTE DE CAPA */}
             <div style={styles.inputGroupHalf}>
               {isMounted ? (
-                <CapaUpload 
-                  label="IMAGEM DE CAPA" 
-                  onChange={(file) => setImagemCapa(file)} 
+                <CapaUpload
+                  label="IMAGEM DE CAPA"
+                  name="coverImage"
                 />
               ) : (
-                <div style={styles.inputGroupHalf}>
-                  <label style={styles.label}>IMAGEM DE CAPA</label>
-                  <div style={styles.uploadContainer}>
-                    <span style={styles.uploadText}>Carregando...</span>
-                  </div>
+                <div style={styles.uploadContainer}>
+                  <span style={styles.uploadText}>Carregando...</span>
                 </div>
+              )}
+              {state?.errors?.coverImage && (
+                <span style={styles.errorText}>{state.errors.coverImage}</span>
               )}
             </div>
 
             <div style={styles.inputGroupHalf}>
               <label style={styles.label}>VÍDEO</label>
-              <input 
-                type="text" 
-                placeholder="insira aqui seu link do youtube" 
+              <input
+                type="text"
+                name="videoUrl"
+                id="videoUrl"
+                placeholder="insira aqui seu link do youtube"
                 style={styles.input}
               />
             </div>
           </div>
 
-          <GaleriaUpload 
+          {/* GALERIA DE FOTOS ADICIONAIS */}
+          <GaleriaUpload
             label="IMAGENS ADICIONAIS (GALERIA DA NOTÍCIA)"
             titulo="CLIQUE PARA SELECIONAR FOTOS ADICIONAIS"
-            destinationUrl="https://meu-servidor.com/upload"
+            onChange={(files) => setGaleriaFotos(files)}
           />
 
+          {/* SWITCH DE STATUS */}
           <div style={styles.switchContainer}>
-            <div 
+            <div
               onClick={() => setSolicitarAnalise(!solicitarAnalise)}
               style={{
                 ...styles.switchTrack,
@@ -91,10 +131,25 @@ export default function PublicarNoticia() {
                 transform: solicitarAnalise ? "translateX(20px)" : "translateX(0px)"
               }} />
             </div>
+            
+            {/* Input oculto para o FormData registrar o estado da alternância */}
+            <input 
+              type="hidden" 
+              name="requiresReview" 
+              value={solicitarAnalise ? "on" : "off"} 
+            />
+
             <span style={styles.switchLabel}>Solicitar análise para aprovação</span>
           </div>
 
-          <button type="submit" className="admin-submit-btn">Publicar</button>
+          <button 
+            type="submit" 
+            className="admin-submit-btn" 
+            style={styles.submitButton}
+            disabled={isPending}
+          >
+            {isPending ? "Publicando..." : "Publicar"}
+          </button>
 
         </form>
       </main>
@@ -107,13 +162,13 @@ const styles = {
     display: "flex",
     height: "100vh",
     width: "100vw",
-    overflow: "hidden", 
+    overflow: "hidden",
     margin: 0,
-    backgroundColor: "transparent", 
+    backgroundColor: "transparent",
   },
   mainContent: {
     flexGrow: 1,
-    overflowY: "auto", 
+    overflowY: "auto",
     padding: "50px",
     boxSizing: "border-box",
     display: "flex",

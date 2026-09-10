@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-export default function CapaUpload({ 
-  label = "IMAGEM DE CAPA", 
+export default function CapaUpload({
+  label = "IMAGEM DE CAPA",
+  name = "coverImage", // 1. Garante que o FormData capture o arquivo
   onChange,
-  initialPreview = null 
+  initialPreview = null
 }) {
   const [selectedImage, setSelectedImage] = useState(initialPreview);
   const [isMounted, setIsMounted] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -33,6 +35,12 @@ export default function CapaUpload({
       URL.revokeObjectURL(selectedImage.previewUrl);
     }
     setSelectedImage(null);
+
+    // Limpa o valor no input nativo para permitir selecionar o mesmo arquivo se quiser
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
     if (onChange) onChange(null);
   };
 
@@ -42,19 +50,28 @@ export default function CapaUpload({
     <div style={styles.container}>
       {label && <label style={styles.label}>{label}</label>}
 
+      {/* 2. O input agora fica SEMPRE presente no formulário, invisível */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        name={name}
+        accept="image/*"
+        onChange={handleFileChange}
+        style={{ display: "none" }}
+      />
+
       <div style={styles.box}>
         {selectedImage ? (
-
           <div style={styles.previewContainer}>
-            <img 
-              src={selectedImage.previewUrl} 
-              alt="Preview" 
-              style={styles.previewImage} 
+            <img
+              src={selectedImage.previewUrl}
+              alt="Preview"
+              style={styles.previewImage}
             />
             <span style={styles.fileName}>{selectedImage.name}</span>
-            <button 
-              type="button" 
-              onClick={handleRemove} 
+            <button
+              type="button"
+              onClick={handleRemove}
               style={styles.removeButton}
               title="Remover imagem"
             >
@@ -62,22 +79,21 @@ export default function CapaUpload({
             </button>
           </div>
         ) : (
-
-          <label style={styles.uploadArea}>
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={handleFileChange} 
-              style={{ display: "none" }} 
-            />
+          /* Ao clicar nesta área, aciona o input escondido */
+          <div
+            style={styles.uploadArea}
+            onClick={() => fileInputRef.current?.click()}
+          >
             <span style={styles.uploadButton}>Escolher arquivo</span>
             <span style={styles.uploadText}>Nenhum arquivo escolhido</span>
-          </label>
+          </div>
         )}
       </div>
     </div>
   );
 }
+
+// estilos mantidos iguais...
 
 const styles = {
   container: {
@@ -96,7 +112,7 @@ const styles = {
   },
   box: {
     width: "100%",
-    height: "52px", 
+    height: "52px",
     border: "1px solid #d1d5db",
     borderRadius: "8px",
     backgroundColor: "#ffffff",
@@ -123,7 +139,7 @@ const styles = {
     userSelect: "none",
   },
   uploadText: {
-    color: "#6b7280", 
+    color: "#6b7280",
     fontSize: "15px",
     fontFamily: "inherit",
   },
@@ -136,7 +152,7 @@ const styles = {
   },
   previewImage: {
     width: "38px",
-    height: "38px", 
+    height: "38px",
     objectFit: "cover",
     borderRadius: "6px",
     border: "1px solid #e5e7eb",

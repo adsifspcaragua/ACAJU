@@ -24,6 +24,7 @@ model ADM {
   news      News[]
   mutirao   Mutirao[]
   documents Document[]
+  miniMuseu MiniMuseumItem[]
 }
 
 model ADMLOG {
@@ -44,45 +45,44 @@ enum Status {
 }
 
 enum MutiraoType {
-  LIMPEZA 
-  PLANTIO 
-  OUTRO   
+  LIMPEZA
+  PLANTIO
+  OUTRO
 }
 
 enum Environment {
-  PRAIA   
-  RIO      
-  MANGUE   
-  RESTINGA 
-  URBANO   
+  PRAIA
+  RIO
+  MANGUE
+  RESTINGA
+  URBANO
 }
-
 
 // (Tela Horário de Funcionamento)
 
-
 enum VisitStatus {
-  ABERTO      
-  FECHADO     
-  MANUTENCAO  
+  ABERTO
+  FECHADO
+  MANUTENCAO
 }
 
 // Modelo da Tabela de Horário de Funcionamento
 model OperatingHours {
   id              String      @id @default(uuid())
-  currentStatus   VisitStatus @default(ABERTO) 
-  openingTime     String      
-  closingTime     String      
+  currentStatus   VisitStatus @default(ABERTO)
+  openingTime     String
+  closingTime     String
   additionalNotes String?     @db.Text
   updatedAt       DateTime    @updatedAt
 }
-// 4. PUBLICAÇÕES 
+
+// PUBLICAÇÕES 
 
 model News {
   id         String  @id @default(uuid())
   title      String
   content    String  @db.Text
-  coverImage String?
+  coverImage String
   videoUrl   String?
   status     Status  @default(PENDING)
 
@@ -92,26 +92,35 @@ model News {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  galleryImages Json?
+  images NewsImage[]
+}
+
+// mini tabela para salvar url de image linha por linha
+model NewsImage {
+  id        String   @id @default(uuid())
+  url       String
+  createdAt DateTime @default(now())
+
+  newsId String
+  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
 }
 
 // MULTIRÔES
 
 model Mutirao {
   id          String      @id @default(uuid())
-  name        String     
-  type        MutiraoType 
-  date        DateTime    
+  name        String
+  type        MutiraoType
+  date        DateTime
   time        String
   location    String
-  environment Environment 
+  environment Environment
   coverImage  String?
   description String      @db.Text
   createdAt   DateTime    @default(now())
 
   adminId String
   ADM     ADM    @relation(fields: [adminId], references: [id])
-
 }
 
 //model Project {
@@ -138,7 +147,7 @@ model Mutirao {
 
 model Document {
   id          String   @id @default(uuid())
-  name        String 
+  name        String
   description String   @db.Text
   fileUrl     String // URL do PDF upado
   createdAt   DateTime @default(now())
@@ -147,11 +156,19 @@ model Document {
   ADM     ADM    @relation(fields: [adminId], references: [id])
 }
 
-// 6. GALERIA GLOBAL (Tela Galeria de Fotos)
 
-model GalleryImage {
-  id            String   @id @default(uuid())
-  imageUrl      String
-  createdAt     DateTime @default(now())
-  galleryImages Json?
+// novas adições que terão de ser conversadas 
+
+model MiniMuseumItem {
+  id          String   @id @default(uuid())
+  title       String   
+  description String?  @db.Text
+  imageUrl    String   
+  year        String?
+  
+  adminId     String
+  ADM         ADM      @relation(fields: [adminId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

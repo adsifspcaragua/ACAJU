@@ -1,51 +1,106 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Uploady, { useBatchAddListener } from "@rpldy/uploady";
-import UploadButton from "@rpldy/upload-button";
+import React, { useState, useEffect, useRef } from "react";
 import { FiPlus, FiTrash2, FiX } from "react-icons/fi";
 
-function GaleriaConteudo({ titulo, label }) {
-  const [arquivos, setArquivos] = useState([]);
+export default function GaleriaUpload({
+  label = "IMAGENS ADICIONAIS (GALERIA DA NOTÍCIA)",
+  titulo = "CLIQUE PARA SELECIONAR FOTOS ADICIONAIS",
+  onChange,
+}) {
+  const [arquivos, setArquivos] = useState([]); // [{ id, file, name, previewUrl }]
+  const [isMounted, setIsMounted] = useState(false);
+  const fileInputRef = useRef(null);
 
-  useBatchAddListener((batch) => {
-    const novosArquivos = batch.items.map((item) => ({
-      id: item.id,
-      name: item.file.name,
-      url: URL.createObjectURL(item.file),
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Notifica o formulário pai sempre que a lista de arquivos mudar
+  const atualizarArquivos = (novaLista) => {
+    setArquivos(novaLista);
+    if (onChange) {
+      onChange(novaLista.map((item) => item.file));
+    }
+  };
+
+  const handleFiles = (e) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
+
+    const novosItens = selectedFiles.map((file) => ({
+      id: crypto.randomUUID(),
+      file,
+      name: file.name,
+      previewUrl: URL.createObjectURL(file),
     }));
 
-    setArquivos((prev) => [...prev, ...novosArquivos]);
-  });
+    atualizarArquivos([...arquivos, ...novosItens]);
+
+    // Reseta o input para permitir selecionar o mesmo arquivo novamente se quiser
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const removerFoto = (idParaRemover) => {
-    setArquivos((prev) => prev.filter((item) => item.id !== idParaRemover));
+    const itemParaRemover = arquivos.find((item) => item.id === idParaRemover);
+    if (itemParaRemover?.previewUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(itemParaRemover.previewUrl);
+    }
+    const atualizados = arquivos.filter((item) => item.id !== idParaRemover);
+    atualizarArquivos(atualizados);
   };
 
   const limparTudo = () => {
-    setArquivos([]);
+    arquivos.forEach((item) => {
+      if (item.previewUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(item.previewUrl);
+      }
+    });
+    atualizarArquivos([]);
   };
+
+  if (!isMounted) {
+    return (
+      <div style={styles.inputGroupFull}>
+        {label && <label style={styles.label}>{label}</label>}
+        <div style={styles.selectBox}>
+          <p style={styles.selectBoxTitle}>Carregando módulo de fotos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={styles.inputGroupFull}>
       {label && <label style={styles.label}>{label}</label>}
 
+      {/* Input nativo invisível acionado pelos botões */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept="image/*"
+        onChange={handleFiles}
+        style={{ display: "none" }}
+      />
+
       <div style={styles.selectBox}>
         {arquivos.length === 0 ? (
-
-          <UploadButton className="galeria-upload-btn">
-            <div style={styles.placeholderContent}>
-              <span style={{ fontSize: "28px" }}>📸</span>
-              <p style={styles.selectBoxTitle}>
-                {titulo ? titulo.toUpperCase() : "CLIQUE PARA SELECIONAR FOTOS"}
-              </p>
-              <span style={styles.selectBoxSubtitle}>
-                OU ARRASTE OS FICHEIROS PARA CÁ
-              </span>
-            </div>
-          </UploadButton>
+          <div
+            style={styles.placeholderContent}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <span style={{ fontSize: "28px" }}>📸</span>
+            <p style={styles.selectBoxTitle}>
+              {titulo ? titulo.toUpperCase() : "CLIQUE PARA SELECIONAR FOTOS"}
+            </p>
+            <span style={styles.selectBoxSubtitle}>
+              CLIQUE PARA ADICIONAR IMAGENS
+            </span>
+          </div>
         ) : (
-
           <div style={styles.innerContainer}>
             <div style={styles.previewContainer}>
               {arquivos.map((item) => (
@@ -58,17 +113,21 @@ function GaleriaConteudo({ titulo, label }) {
                   >
                     <FiX size={14} color="#ffffff" />
                   </button>
-                  <img src={item.url} alt={item.name} style={styles.previewImage} />
+                  <img src={item.url || item.previewUrl} alt={item.name} style={styles.previewImage} />
                   <span style={styles.previewName}>{item.name}</span>
                 </div>
               ))}
             </div>
 
             <div style={styles.actionsBar}>
-              <UploadButton className="btn-adicionar-mais">
+              <button
+                type="button"
+                style={styles.btnAddMore}
+                onClick={() => fileInputRef.current?.click()}
+              >
                 <FiPlus size={18} color="#085747" />
                 <span>Adicionar mais fotos</span>
-              </UploadButton>
+              </button>
 
               <button
                 type="button"
@@ -83,35 +142,6 @@ function GaleriaConteudo({ titulo, label }) {
         )}
       </div>
     </div>
-  );
-}
-
-export default function GaleriaUpload({
-  label = "FOTOS DO PROJETO",
-  titulo = "CLIQUE PARA SELECIONAR FOTOS DO PROJETO",
-  destinationUrl = "https://meu-servidor.com/upload",
-}) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return (
-      <div style={styles.inputGroupFull}>
-        {label && <label style={styles.label}>{label}</label>}
-        <div style={styles.selectBox}>
-          <p style={styles.selectBoxTitle}>Carregando módulo de upload...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <Uploady destination={{ url: destinationUrl }} multiple>
-      <GaleriaConteudo titulo={titulo} label={label} />
-    </Uploady>
   );
 }
 
@@ -149,7 +179,7 @@ const styles = {
     justifyContent: "center",
     gap: "4px",
     width: "100%",
-    pointerEvents: "none",
+    cursor: "pointer",
   },
   selectBoxTitle: {
     fontSize: "13px",
@@ -230,6 +260,21 @@ const styles = {
     gap: "12px",
     flexWrap: "wrap",
     justifyContent: "center",
+  },
+  btnAddMore: {
+    backgroundColor: "#ffffff",
+    border: "1px solid #d1d5db",
+    borderRadius: "6px",
+    padding: "0 16px",
+    height: "42px",
+    fontSize: "13px",
+    fontWeight: "600",
+    color: "#085747",
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    boxSizing: "border-box",
   },
   btnClearAll: {
     backgroundColor: "#ffffff",
