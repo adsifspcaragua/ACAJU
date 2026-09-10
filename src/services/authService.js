@@ -19,6 +19,17 @@ export async function autenticarAdmin(email, pass) {
   return adminSemSenha;
 }
 
+export async function createAdminLog({ adminId, action, ipAddress, userAgent }) {
+  return await prisma.aDMLOG.create({
+    data: {
+      adminId,
+      action,
+      ipAddress,
+      userAgent,
+    },
+  });
+}
+
 export async function cadastrarAdmin({ name, email, pass }) {
 
   const adminExiste = await prisma.aDM.findUnique({
@@ -47,12 +58,14 @@ export async function atualizarDadosAdmin({ id, name, email }) {
   const emailEmUso = await prisma.aDM.findFirst({
     where: {
       email,
-      NOT: { id },
+      id: {
+        not: id, 
+      },
     },
   });
 
   if (emailEmUso) {
-    throw new Error('EMAIL_DUPLICADO');
+    throw new Error('EMAIL_JA_CADASTRADO');
   }
 
   const adminAtualizado = await prisma.aDM.update({
@@ -64,7 +77,7 @@ export async function atualizarDadosAdmin({ id, name, email }) {
   return adminSemSenha;
 }
 
-export async function alterarSenhaAdmin({ id, currentPass, newPass }) {
+export async function alterarSenhaAdmin({ id, currentPass, newPass, confirmPass }) {
   const admin = await prisma.aDM.findUnique({
     where: { id },
   });
@@ -74,8 +87,9 @@ export async function alterarSenhaAdmin({ id, currentPass, newPass }) {
   }
 
   const senhaAtualValida = await bcrypt.compare(currentPass, admin.pass);
+  console.log(senhaAtualValida);
   if (!senhaAtualValida) {
-    throw new Error('SENHA_INCORRETA');
+    throw new Error('SENHA INFORMADA ESTA INCORRETA', senhaAtualValida);
   }
 
   const novoHash = await bcrypt.hash(newPass, 10);

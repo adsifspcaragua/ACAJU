@@ -39,8 +39,6 @@ export default function GerenciarUsuario({ admin }) {
               </p>
             )}
 
-            <input type="hidden" name="id" value={admin?.id} />
-
             <div style={styles.row}>
               <div style={styles.inputGroupHalf}>
                 <label style={styles.label}>NOME COMPLETO</label>
@@ -106,8 +104,6 @@ export default function GerenciarUsuario({ admin }) {
                 {passState.message}
               </p>
             )}
-
-            <input type="hidden" name="id" value={admin?.id} />
 
             <div style={styles.row3Cols}>
               <div style={styles.inputGroupThird}>

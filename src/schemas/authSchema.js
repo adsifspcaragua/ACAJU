@@ -34,7 +34,7 @@ export const updateProfileSchema = z.object({
 export const changePasswordSchema = z
   .object({
     id: z.string().min(1, { message: 'ID inválido.' }),
-    currentPass: z.string().min(1, { message: 'Informe a senha atual.' }),
+    currentPass: z.string().trim().min(1, { message: 'Informe a senha atual.' }),
     newPass: z.string().trim().min(8, { message: 'A nova senha deve ter no mínimo 8 caracteres.' }),
     confirmPass: z.string().trim().min(8, { message: 'Confirme a nova senha.' }),
   })

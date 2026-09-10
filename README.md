@@ -65,3 +65,7 @@ VALUES (
   NOW(), 
   NOW()
 );
+
+
+-- 3. Comando para visualizar a tabela admlog em ordem do mais novo-antigo
+SELECT * FROM ADMLOG ORDER BY loginAt DESC; -- mais recentes primeiro

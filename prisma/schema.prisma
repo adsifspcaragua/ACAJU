@@ -28,6 +28,7 @@ model ADM {
 
 model ADMLOG {
   id        String   @id @default(uuid())
+  action    String
   loginAt   DateTime @default(now())
   ipAddress String?
   userAgent String?

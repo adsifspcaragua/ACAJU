@@ -1,11 +1,12 @@
 'use server';
 
 import { loginSchema, registerSchema, updateProfileSchema, changePasswordSchema } from '@/schemas/authSchema';
-import { autenticarAdmin, cadastrarAdmin, atualizarDadosAdmin, alterarSenhaAdmin } from '@/services/authService';
-import { createSession, deleteSession  } from '../lib/session'
+import { autenticarAdmin, cadastrarAdmin, atualizarDadosAdmin, alterarSenhaAdmin, createAdminLog } from '@/services/authService';
+import { createSession, deleteSession, decrypt } from '../lib/session'
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers'
+import { logAdminAction } from '@/lib/logger';
 
 export async function loginAction(prevState, formData) {
   const rawData = {
@@ -32,15 +33,19 @@ export async function loginAction(prevState, formData) {
     };
   }
 
-  // 3. (Futura criação do cookie de sessão/JWT aqui)
   await createSession(admin.id);
-  
-  // 4. Redireciona para a área administrativa
+  await logAdminAction(admin.id, 'LOGIN');
+
   redirect('/admin/meuPerfil');
 }
 
 
 export async function registerAction(prevState, formData) {
+  const currentAdminId = await getSessionUserId();
+  if (!currentAdminId) {
+    return { generalError: 'Sessão expirada. Faça login novamente.' };
+  }
+
   const rawData = {
     name: formData.get('name'),
     email: formData.get('email'),
@@ -57,7 +62,9 @@ export async function registerAction(prevState, formData) {
 
   try {
     await cadastrarAdmin(validation.data);
+    await logAdminAction(currentAdminId, 'CADASTRAR NOVO ADM');
     revalidatePath('/admin');
+
     return { success: true, message: 'Administrador cadastrado com sucesso!' };
   } catch (error) {
     if (error.message === 'EMAIL_DUPLICADO') {
@@ -68,13 +75,16 @@ export async function registerAction(prevState, formData) {
 }
 
 export async function updateProfileAction(prevState, formData) {
-  console.log('--- [DEBUG UPDATE] ---');
+  const adminId = await getSessionUserId();
+  if (!adminId) {
+    return { generalError: 'Sessão expirada. Faça login novamente.' };
+  }
+
   const rawData = {
-    id: formData.get('id'),
+    id: adminId,
     name: formData.get('name'),
     email: formData.get('email'),
   };
-  console.log('1. Dados brutos recebidos:', rawData);
 
   const validation = updateProfileSchema.safeParse(rawData);
 
@@ -86,12 +96,11 @@ export async function updateProfileAction(prevState, formData) {
     };
   }
 
-  console.log('2. Dados validados pelo Zod:', validation.data);
-
   try {
-    const res = await atualizarDadosAdmin(validation.data);
-    console.log('3. Retorno do Prisma:', res);
+    await atualizarDadosAdmin(validation.data);
+    await logAdminAction(adminId, 'UPDATE DADOS ADM');
     revalidatePath('/admin/meuPerfil');
+
     return { success: true, message: 'Dados atualizados com sucesso!' };
   } catch (error) {
     console.error('Erro no Service/Prisma:', error);
@@ -103,8 +112,14 @@ export async function updateProfileAction(prevState, formData) {
 }
 
 export async function changePasswordAction(prevState, formData) {
+
+  const adminId = await getSessionUserId();
+  if (!adminId) {
+    return { generalError: 'Sessão expirada. Faça login novamente.' };
+  }
+
   const rawData = {
-    id: formData.get('id'),
+    id: adminId,
     currentPass: formData.get('currentPass'),
     newPass: formData.get('newPass'),
     confirmPass: formData.get('confirmPass'),
@@ -120,16 +135,26 @@ export async function changePasswordAction(prevState, formData) {
 
   try {
     await alterarSenhaAdmin(validation.data);
+    await logAdminAction(adminId, 'UPDATE SENHA');
+
     return { success: true, message: 'Senha alterada com sucesso!' };
-  } catch (error) {
-    if (error.message === 'SENHA_INCORRETA') {
-      return { message: 'A senha atual está incorreta.' };
-    }
-    return { message: 'Erro ao alterar a senha.' };
+  } catch (err) {
+    console.error("Erro detalhado no changePassword:", err);
+
+    return {
+      message: 'Erro ao alterar a senha.',
+      errorDetails: err?.message || String(err)
+    };
   }
 }
 
 export async function logout() {
+  const adminId = await getSessionUserId();
+
+  if (adminId) {
+    await logAdminAction(adminId, 'LOGOUT');
+  }
+
   await deleteSession()
   redirect('/admin/login')
 }
