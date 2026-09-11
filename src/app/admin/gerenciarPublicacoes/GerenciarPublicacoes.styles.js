@@ -8,33 +8,36 @@ export const getBadgeStyle = (cat) => {
   };
 
   switch (cat) {
-    case 'Notícia':
-      return { ...baseStyle, backgroundColor: '#e0f2fe', color: '#0369a1' };
-    case 'Mutirão':
-      return { ...baseStyle, backgroundColor: '#dcfce7', color: '#15803d' };
-    case 'Projeto':
-      return { ...baseStyle, backgroundColor: '#f3e8ff', color: '#7e22ce' };
-    case 'Memória Caiçara':
-      return { ...baseStyle, backgroundColor: '#fae8ff', color: '#a21caf' };
-    case 'Mini-Museu':
-      return { ...baseStyle, backgroundColor: '#ffedd5', color: '#c2410c' };
-    case 'Documentos':
-      return { ...baseStyle, backgroundColor: '#f1f5f9', color: '#475569' };
+    case "Notícia":
+      return { ...baseStyle, backgroundColor: "#e0f2fe", color: "#0369a1" };
+    case "Mutirão":
+      return { ...baseStyle, backgroundColor: "#dcfce7", color: "#15803d" };
+    case "Projeto":
+      return { ...baseStyle, backgroundColor: "#f3e8ff", color: "#7e22ce" };
+    case "Memória Caiçara":
+      return { ...baseStyle, backgroundColor: "#fae8ff", color: "#a21caf" };
+    case "Mini-Museu":
+      return { ...baseStyle, backgroundColor: "#ffedd5", color: "#c2410c" };
+    case "Documentos":
+      return { ...baseStyle, backgroundColor: "#f1f5f9", color: "#475569" };
     default:
-      return { ...baseStyle, backgroundColor: '#f3f4f6', color: '#374151' };
+      return { ...baseStyle, backgroundColor: "#f3f4f6", color: "#374151" };
   }
 };
-
 
 export const styles = {
   container: {
     display: "flex",
     minHeight: "100vh",
-    margin: 0
+    width: "100%",
+    margin: 0,
+    boxSizing: "border-box",
   },
   mainContent: {
-    flexGrow: 1,
-    padding: "32px",
+    flex: 1,
+    minWidth: 0,
+    marginLeft: "320px", 
+    padding: "32px 40px", 
     boxSizing: "border-box",
     display: "flex",
     flexDirection: "column",
@@ -58,68 +61,73 @@ export const styles = {
   },
   pageTitle: {
     color: "#ffffff",
-    fontSize: "36px",
+    fontSize: "32px",
     fontWeight: "700",
     margin: 0,
     letterSpacing: "-0.5px",
   },
   pageSubtitle: {
     color: "rgba(255,255,255,0.8)",
-    fontSize: "15px",
+    fontSize: "14px",
     margin: "6px 0 0 0",
   },
   welcomeBadge: {
     backgroundColor: "rgba(255, 255, 255, 0.25)",
     color: "#ffffff",
-    padding: "10px 20px",
+    padding: "8px 16px",
     borderRadius: "8px",
-    fontSize: "13px",
+    fontSize: "12px",
     fontWeight: "600",
     letterSpacing: "0.3px",
   },
   tabsContainer: {
     display: "flex",
     alignItems: "center",
-    gap: "12px",
+    gap: "8px",
     backgroundColor: "rgba(255,255,255,0.15)",
     padding: "8px",
     borderRadius: "10px",
     backdropFilter: "blur(8px)",
     overflowX: "auto",
     whiteSpace: "nowrap",
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
   filterIcon: {
     color: "rgba(255,255,255,0.7)",
     marginLeft: "10px",
     display: "flex",
     alignItems: "center",
+    flexShrink: 0,
   },
   tab: {
     background: "transparent",
     border: "none",
     color: "#ffffff",
     fontWeight: "500",
-    padding: "10px 18px",
+    padding: "8px 14px",
     cursor: "pointer",
     borderRadius: "8px",
     transition: "all 0.2s ease",
-    fontSize: "14px",
+    fontSize: "13px",
+    flexShrink: 0,
   },
   tabActive: {
     background: "#f97316",
     border: "none",
     color: "#ffffff",
     fontWeight: "600",
-    padding: "10px 18px",
+    padding: "8px 14px",
     cursor: "pointer",
     borderRadius: "8px",
     boxShadow: "0 4px 12px rgba(249, 115, 22, 0.3)",
-    fontSize: "14px",
+    fontSize: "13px",
+    flexShrink: 0,
   },
   card: {
     backgroundColor: "#ffffff",
     borderRadius: "16px",
-    padding: "24px",
+    padding: "16px",
     boxShadow: "0 12px 30px rgba(0, 0, 0, 0.12)",
     width: "100%",
     maxWidth: "1200px",
@@ -129,24 +137,24 @@ export const styles = {
   table: {
     width: "100%",
     borderCollapse: "collapse",
-    minWidth: "800px",
+    minWidth: "600px",
   },
   th: {
     textAlign: "left",
-    padding: "16px",
+    padding: "12px",
     borderBottom: "2px solid #e2e8f0",
     color: "#475569",
-    fontSize: "13px",
+    fontSize: "12px",
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: "0.5px",
   },
   thCenter: {
     textAlign: "center",
-    padding: "16px",
+    padding: "12px",
     borderBottom: "2px solid #e2e8f0",
     color: "#475569",
-    fontSize: "13px",
+    fontSize: "12px",
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: "0.5px",
@@ -156,52 +164,50 @@ export const styles = {
     transition: "background-color 0.2s ease",
   },
   tdTitle: {
-    padding: "16px",
-    fontSize: "15px",
+    padding: "12px",
+    fontSize: "14px",
     fontWeight: "600",
     color: "#1e293b",
   },
   tdCenter: {
-    padding: "16px",
+    padding: "12px",
     textAlign: "center",
   },
   tdCenterText: {
-    padding: "16px",
+    padding: "12px",
     textAlign: "center",
-    fontSize: "14px",
+    fontSize: "13px",
     color: "#64748b",
   },
   badge: {
-    padding: "6px 12px",
+    padding: "4px 10px",
     borderRadius: "999px",
-    fontSize: "12px",
+    fontSize: "11px",
     fontWeight: "600",
   },
   actionBtnEdit: {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "38px",
-    height: "38px",
+    width: "34px",
+    height: "34px",
     backgroundColor: "#f1f5f9",
     color: "#175d52",
     border: "none",
-    borderRadius: "10px",
+    borderRadius: "8px",
     cursor: "pointer",
-    transition: "all 0.2s ease",
   },
   actionBtnDelete: {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "38px",
-    height: "38px",
+    width: "34px",
+    height: "34px",
     backgroundColor: "#fef2f2",
     color: "#ef4444",
     border: "none",
-    borderRadius: "10px",
+    borderRadius: "8px",
     cursor: "pointer",
-    transition: "all 0.2s ease",
   },
   actionGroup: {
     display: "flex",
