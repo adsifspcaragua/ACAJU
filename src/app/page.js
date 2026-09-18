@@ -1,9 +1,12 @@
 import Link from "next/link";
+import Footer from "../components/Footer";
+
 export default function Home() {
   return (
     
     <div style={styles.page}>
        <Link href="../admin/login" style={styles.primaryLink}>Servidor</Link>
+       <Footer />
     </div>
   );
 }
