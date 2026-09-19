@@ -7,15 +7,19 @@ import '@/app/globals.css';
 export default function NavbarACAJU() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [hoveredSubItem, setHoveredSubItem] = useState(null);
+  
+  // Estados para controle de responsividade e menu mobile
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(null);
 
+  // Monitora o tamanho da tela para alternar entre Desktop e Mobile
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 992);
-      if (window.innerWidth >= 992) {
-        setIsMobileMenuOpen(false);
+      // Ponto de quebra aumentado para 1200px para evitar esmagamento em tela dividida
+      setIsMobile(window.innerWidth < 1200);
+      if (window.innerWidth >= 1200) {
+        setIsMobileMenuOpen(false); 
       }
     };
     
@@ -27,6 +31,7 @@ export default function NavbarACAJU() {
 
   const handleMouseEnter = (menu) => setActiveMenu(menu);
   const handleMouseLeave = () => setActiveMenu(null);
+
   const toggleAccordion = (menu) => {
     setOpenAccordion(openAccordion === menu ? null : menu);
   };
@@ -146,7 +151,7 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('participe')}
                 onMouseLeave={handleMouseLeave}
               >
-                <span style={styles.navItem}>Participe ˅</span>
+                <span style={styles.navItem}>Participe</span>
                 {activeMenu === 'participe' && (
                   <ul style={styles.dropdownMenu}>
                     <li 
@@ -322,7 +327,7 @@ const styles = {
     backgroundColor: "#70233b", 
     color: "#ffffff",
     display: "flex",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
     padding: "0 50px",
     height: "70px",
@@ -349,6 +354,7 @@ const styles = {
   },
   logoText: {
     letterSpacing: "1px",
+    whiteSpace: "nowrap", 
   },
   hamburgerBtn: {
     fontSize: "26px",
@@ -362,7 +368,7 @@ const styles = {
     margin: 0,
     padding: 0,
     alignItems: "center",
-    gap: "28px",
+    gap: "22px", 
   },
   navItemContainer: {
     position: "relative",
@@ -378,6 +384,7 @@ const styles = {
     alignItems: "center",
     gap: "4px",
     transition: "opacity 0.2s",
+    whiteSpace: "nowrap", 
   },
   dropdownMenu: {
     position: "absolute",
@@ -399,22 +406,20 @@ const styles = {
     color: "#ffffff",
     cursor: "pointer",
     transition: "background-color 0.2s",
+    whiteSpace: "nowrap",
   },
   dropdownItemHover: {
     backgroundColor: "#3a0e1a", 
   },
   
-  // ==========================================
-  // ESTILOS DO MENU MOBILE (OVERLAY TELA CHEIA)
-  // ==========================================
   mobileOverlay: {
     position: "fixed",
     top: 0,
     left: 0,
     width: "100vw",
     height: "100vh",
-    backgroundColor: "#70233b", // Fundo igual à referência
-    zIndex: 100000, // Z-index máximo para cobrir toda a interface
+    backgroundColor: "#70233b", 
+    zIndex: 100000, 
     display: "flex",
     flexDirection: "column",
     overflowY: "auto",
@@ -448,7 +453,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.15)", // Linha separadora sutil
+    borderBottom: "1px solid rgba(255, 255, 255, 0.15)",
     cursor: "pointer",
   },
   accordionIcon: {
@@ -456,7 +461,7 @@ const styles = {
     opacity: 0.8,
   },
   mobileSubList: {
-    backgroundColor: "rgba(0, 0, 0, 0.1)", // Fundo levemente escurecido para submenus
+    backgroundColor: "rgba(0, 0, 0, 0.1)", 
     padding: "10px 20px",
     borderRadius: "8px",
     marginTop: "5px",
