@@ -1,11 +1,12 @@
 import Link from "next/link";
 import Footer from "../components/Footer";
+import NavbarACAJU from "../components/Navbar";
 
 export default function Home() {
   return (
     
     <div style={styles.page}>
-       <Link href="../admin/login" style={styles.primaryLink}>Servidor</Link>
+      <NavbarACAJU />
        <Footer />
     </div>
   );
