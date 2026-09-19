@@ -75,17 +75,13 @@ export default function Footer() {
 }
 
 const styles = {
-footer: {
+  footer: {
     backgroundColor: "#21151b",
     color: "#c9b8be",
     padding: "60px 20px 30px 20px",
-    fontFamily: "sans-serif",
-    width: "100vw", 
-    position: "relative",
-    left: "50%",
-    right: "50%",
-    marginLeft: "-50vw",
-    marginRight: "-50vw",
+    fontFamily: "inherit",
+    width: "100%",
+    margin: 0,
     boxSizing: "border-box",
   },
   container: {
