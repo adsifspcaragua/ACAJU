@@ -22,11 +22,5 @@ const styles = {
     margin: 0,
     padding: "20px",
     boxSizing: "border-box",
-  },
-    primaryLink: {
-    color: "#2e5c31",
-    fontSize: "14px",
-    fontWeight: "Bold",
-    textDecoration: "none",
-  },
+  }
 };
