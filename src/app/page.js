@@ -4,23 +4,30 @@ import NavbarACAJU from "../components/Navbar";
 
 export default function Home() {
   return (
-    
     <div style={styles.page}>
       <NavbarACAJU />
-       <Footer />
+      
+      <main style={styles.mainContent}>
+
+      </main>
+
+      <Footer />
     </div>
   );
 }
 
 const styles = {
   page: {
-    width: "100vw",             
-    height: "100vh",           
-    display: "flex",            
-    justifyContent: "center",   
-    alignItems: "center",       
+    width: "100%",
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between", 
     margin: 0,
-    padding: "20px",
+    padding: 0, 
     boxSizing: "border-box",
-  }
+  },
+  mainContent: {
+    flexGrow: 1, 
+  },
 };

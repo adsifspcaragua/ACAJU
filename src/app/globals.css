@@ -1,17 +1,16 @@
-/* Importando a fonte Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* Zerando as margens e ajustando o tamanho para ocupar toda a tela */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html, body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   width: 100%;
   min-height: 100vh;
-  /* Aplica a fonte Poppins em toda a aplicação por padrão */
+  overflow-x: hidden; 
   font-family: 'Poppins', sans-serif; 
-}
-
-*, *::before, *::after {
-  box-sizing: inherit;
 }
