@@ -8,7 +8,7 @@ export default function Footer() {
     <footer style={styles.footer}>
       <div style={styles.container}>
         
-        <div style={styles.grid}>
+        <div className="footer-grid" style={styles.grid}>
           
           <div style={styles.brandColumn}>
             <div style={styles.logoRow}>
@@ -64,12 +64,26 @@ export default function Footer() {
 
         <hr style={styles.divider} />
 
-        <div style={styles.bottomRow}>
+        <div className="footer-bottom" style={styles.bottomRow}>
           <span>© 2000–2026 ACAJU — Associação Caiçara Juqueriquerê</span>
           <span>Caraguatatuba, litoral norte paulista</span>
         </div>
 
       </div>
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+            gap: 36px !important;
+          }
+          .footer-bottom {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 8px !important;
+          }
+        }
+      `}</style>
     </footer>
   );
 }
@@ -78,10 +92,9 @@ const styles = {
   footer: {
     backgroundColor: "#21151b",
     color: "#c9b8be",
-    padding: "60px 20px 30px 20px",
+    padding: "48px 24px 30px 24px",
     fontFamily: "inherit",
     width: "100%",
-    margin: 0,
     boxSizing: "border-box",
   },
   container: {
@@ -90,9 +103,9 @@ const styles = {
   },
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-    gap: "40px",
-    marginBottom: "50px",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "30px",
+    marginBottom: "40px",
   },
   brandColumn: {
     display: "flex",
@@ -127,12 +140,12 @@ const styles = {
     lineHeight: "1.6",
     color: "#a39399",
     margin: 0,
-    maxWidth: "260px",
+    maxWidth: "280px",
   },
   socialDots: {
     display: "flex",
     gap: "10px",
-    marginTop: "8px",
+    marginTop: "4px",
   },
   dot: {
     width: "12px",
@@ -169,7 +182,6 @@ const styles = {
     color: "#a39399",
     textDecoration: "none",
     fontSize: "14px",
-    transition: "color 0.2s",
   },
   address: {
     fontStyle: "normal",
@@ -181,10 +193,10 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "8px",
-    marginTop: "8px",
+    marginTop: "4px",
   },
   arrowLink: {
-    color: "#6e293f",
+    color: "#572132",
     textDecoration: "none",
     fontSize: "14px",
     fontWeight: "500",
@@ -200,7 +212,5 @@ const styles = {
     alignItems: "center",
     fontSize: "12px",
     color: "#7a6b71",
-    flexWrap: "wrap",
-    gap: "12px",
   },
 };
