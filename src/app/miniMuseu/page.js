@@ -18,7 +18,7 @@ const styles = {
     backgroundColor: "#6A3143", 
     color: "#ffffff",
     textAlign: "center",
-    padding: "80px 20px",
+    padding: "120px 20px",
   },
 
   subtituloDestaque: {
@@ -28,6 +28,7 @@ const styles = {
     textTransform: "uppercase",
     color: "rgba(255, 255, 255, 0.8)",
     marginBottom: "15px",
+    marginTop: "5%"
   },
   
   tituloDestaque: {
