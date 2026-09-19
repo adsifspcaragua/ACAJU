@@ -7,40 +7,32 @@ import '@/app/globals.css';
 export default function NavbarACAJU() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [hoveredSubItem, setHoveredSubItem] = useState(null);
-  
-  // Estados para controle de responsividade e menu mobile
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(null);
 
-  // Monitora o tamanho da tela para alternar entre Desktop e Mobile
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 992);
       if (window.innerWidth >= 992) {
-        setIsMobileMenuOpen(false); // Fecha o menu mobile se voltar para desktop
+        setIsMobileMenuOpen(false);
       }
     };
     
-    // Executa na montagem
     handleResize();
     
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Manipuladores para os menus desktop
   const handleMouseEnter = (menu) => setActiveMenu(menu);
   const handleMouseLeave = () => setActiveMenu(null);
-
-  // Manipulador para o sanfona (accordion) do mobile
   const toggleAccordion = (menu) => {
     setOpenAccordion(openAccordion === menu ? null : menu);
   };
 
   return (
     <div style={styles.wrapper}>
-      {/* BARRA SUPERIOR (TOP BAR) - Oculta no mobile para evitar quebra de layout */}
       {!isMobile && (
         <div style={styles.topBar}>
           <div style={styles.topBarLeft}>
@@ -65,14 +57,12 @@ export default function NavbarACAJU() {
         </div>
       )}
 
-      {/* NAVBAR PRINCIPAL (Base) */}
       <header style={styles.navbar}>
         <div style={styles.logoContainer}>
           <span style={styles.logoAc}>AC</span>
           <span style={styles.logoText}>ACAJU</span>
         </div>
 
-        {/* CONTROLE DE EXIBIÇÃO: Desktop (Lista) ou Mobile (Hambúrguer) */}
         {isMobile ? (
           <div 
             style={styles.hamburgerBtn} 
@@ -85,7 +75,6 @@ export default function NavbarACAJU() {
             <ul style={styles.navList}>
               <li style={styles.navItem}>Quem Somos</li>
 
-              {/* MINI-MUSEU DESKTOP */}
               <li 
                 style={styles.navItemContainer}
                 onMouseEnter={() => handleMouseEnter('mini-museu')}
@@ -115,7 +104,6 @@ export default function NavbarACAJU() {
               <li style={styles.navItem}>Notícias</li>
               <li style={styles.navItem}>Projetos</li>
 
-              {/* MUTIRÃO DESKTOP */}
               <li 
                 style={styles.navItemContainer}
                 onMouseEnter={() => handleMouseEnter('mutirao')}
@@ -145,7 +133,6 @@ export default function NavbarACAJU() {
               <li style={styles.navItem}>Memórias Caiçaras</li>
               <li style={styles.navItem}>Institucional</li>
 
-              {/* FALE CONOSCO DESKTOP */}
               <li 
                 style={styles.navItemContainer}
                 onMouseEnter={() => handleMouseEnter('fale-conosco')}
@@ -154,7 +141,6 @@ export default function NavbarACAJU() {
                 <span style={styles.navItem}>Fale Conosco ˅</span>
               </li>
 
-              {/* PARTICIPE DESKTOP */}
               <li 
                 style={styles.navItemContainer}
                 onMouseEnter={() => handleMouseEnter('participe')}
@@ -193,10 +179,8 @@ export default function NavbarACAJU() {
         )}
       </header>
 
-      {/* OVERLAY DO MENU MOBILE (Tela Cheia) */}
       {isMobile && isMobileMenuOpen && (
         <div style={styles.mobileOverlay}>
-          {/* Cabeçalho do Mobile */}
           <div style={styles.mobileHeader}>
             <div style={styles.logoAc}>AC</div>
             <div 
@@ -207,11 +191,9 @@ export default function NavbarACAJU() {
             </div>
           </div>
 
-          {/* Lista Vertical de Links Mobile */}
           <div style={styles.mobileNavList}>
             <div style={styles.mobileNavItem}>Quem Somos</div>
             
-            {/* MINI-MUSEU MOBILE */}
             <div style={styles.mobileAccordionGroup}>
               <div 
                 style={styles.mobileNavItem} 
@@ -231,7 +213,6 @@ export default function NavbarACAJU() {
             <div style={styles.mobileNavItem}>Notícias</div>
             <div style={styles.mobileNavItem}>Projetos</div>
 
-            {/* MUTIRÃO MOBILE */}
             <div style={styles.mobileAccordionGroup}>
               <div 
                 style={styles.mobileNavItem} 
@@ -251,7 +232,6 @@ export default function NavbarACAJU() {
             <div style={styles.mobileNavItem}>Memórias Caiçaras</div>
             <div style={styles.mobileNavItem}>Institucional</div>
 
-            {/* FALE CONOSCO MOBILE */}
             <div style={styles.mobileAccordionGroup}>
               <div 
                 style={styles.mobileNavItem} 
@@ -262,7 +242,6 @@ export default function NavbarACAJU() {
               </div>
             </div>
 
-            {/* PARTICIPE MOBILE */}
             <div style={styles.mobileAccordionGroup}>
               <div 
                 style={styles.mobileNavItem} 
