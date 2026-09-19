@@ -12,6 +12,7 @@ import { postNewsActions } from '@/actions/admActions';
 
 export default function PublicarNoticia() {
   const [state, formAction, isPending] = useActionState(postNewsActions, null);
+
   const [editorContent, setEditorContent] = useState('');
   const [galeriaFotos, setGaleriaFotos] = useState([]);
   const [solicitarAnalise, setSolicitarAnalise] = useState(false);
@@ -69,11 +70,24 @@ export default function PublicarNoticia() {
           {/* CONTEÚDO PRINCIPAL */}
           <div style={styles.inputGroupFull}>
             <label style={styles.label}>CONTEÚDO PRINCIPAL</label>
-            <AdminEditor onChange={(html) => setEditorContent(html)} />
+            {/* <AdminEditor onChange={(html) => setEditorContent(html)} /> */}
+            <textarea
+              placeholder="Escreva o seu conteudo aqui..."
+              onChange={(e) => setEditorContent(e.target.value)}
+              style={{
+                border: "1px solid #d1d5db",
+                borderRadius: "8px",
+                fontSize: "15px",
+                color: "#374151",
+                outline: "none",
+                padding: "14px",
+                height: "200px",
+              }}/>
             <input
+              value={editorContent}
               type="hidden"
               name="content"
-              value={editorContent}
+              id="content"
             />
             {state?.errors?.content && (
               <span style={styles.errorText}>{state.errors.content}</span>
@@ -131,20 +145,20 @@ export default function PublicarNoticia() {
                 transform: solicitarAnalise ? "translateX(20px)" : "translateX(0px)"
               }} />
             </div>
-            
+
             {/* Input oculto para o FormData registrar o estado da alternância */}
-            <input 
-              type="hidden" 
-              name="requiresReview" 
-              value={solicitarAnalise ? "on" : "off"} 
+            <input
+              type="hidden"
+              name="requiresReview"
+              value={solicitarAnalise ? "on" : "off"}
             />
 
             <span style={styles.switchLabel}>Solicitar análise para aprovação</span>
           </div>
 
-          <button 
-            type="submit" 
-            className="admin-submit-btn" 
+          <button
+            type="submit"
+            className="admin-submit-btn"
             style={styles.submitButton}
             disabled={isPending}
           >

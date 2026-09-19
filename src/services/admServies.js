@@ -5,7 +5,7 @@ export async function createNews({
     content,
     coverImage,
     videoUrl,
-    status = 'PENDING',
+    status,
     adminId,
     images = []
 }) {
@@ -17,7 +17,6 @@ export async function createNews({
             videoUrl: videoUrl || null,
             status,
             adminId,
-
             ...(images.length > 0 && {
                 images: {
                     create: images.map((url) => ({

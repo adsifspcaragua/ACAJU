@@ -5,10 +5,9 @@ import { cookies } from 'next/headers'
 import { decrypt } from '@/lib/session';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { createNewsSchema } from '@/schemas/admSchema';
 
 export async function postNewsActions(prevState, formData) {
-
-    // verefivar se a sessão existe (teoricamente não precisa pois existe a proxy e caso fosse o caso o user nem estaria ali, mas mais uma camada de segurança não faz mal)
     const cookieStore = await cookies();
     const session = await decrypt(cookieStore.get('session')?.value);
 
@@ -16,25 +15,29 @@ export async function postNewsActions(prevState, formData) {
         return { error: 'Sessão inválida. Faça login novamente.' };
     }
 
-    // extraçao das strings
-    const title = formData.get('title');
-    const content = formData.get('content');
-    const videoUrl = formData.get('videoUrl') || null;
+    const rawData = {
+        title: formData.get('title'),
+        content: formData.get('content'),
+        videoUrl: formData.get('videoUrl'),
+        requiresReview: formData.get('requiresReview'),
+    };
 
-    if (!title || !content) {
-        return { error: 'Título ou conteudo estão vazios ou não foram inseridos.' };
+    const validation = createNewsSchema.safeParse(rawData);
+
+    if (!validation.success) {
+        return {
+            errors: validation.error.flatten().fieldErrors,
+            message: 'Preencha os campos corretamente.',
+        };
     }
 
-    // upload da cover image
     const coverFile = formData.get('coverImage');
 
     if (!coverFile || coverFile.size === 0) {
         return { error: "A imagem de capa é obrigatória." };
     }
 
-    const coverPath = await saveFileLocally(coverFile, 'news'); 
-
-    // upload de imagens adicionais
+    const coverPath = await saveFileLocally(coverFile, 'news');
 
     const galleryFiles = formData.getAll('galleryImages');
     const imageUrls = [];
@@ -46,19 +49,10 @@ export async function postNewsActions(prevState, formData) {
         }
     }
 
-    // Status 
-    // Inputs tipo checkbox/switch enviam 'on' quando marcados
-    const requiresReview = formData.get('requiresReview') === 'on';
-    const status = requiresReview ? 'PENDING' : 'PUBLISHED';
-
-    //  chamada da função de criar news do service (createNews)
     try {
         await createNews({
-            title,
-            content,
+            ...validation.data,
             coverImage: coverPath,
-            videoUrl,
-            status,
             adminId: session.userId,
             images: imageUrls,
         })

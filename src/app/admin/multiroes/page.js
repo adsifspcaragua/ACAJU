@@ -41,7 +41,7 @@ export default function GerenciarMultiroes() {
           <div style={styles.row}>
             <div style={styles.inputGroupHalf}>
               <label style={styles.label}>TIPO DE MUTIRÃO</label>
-              <select style={styles.select}>
+              <select style={styles.select} name="type">
                 <option value="">Selecione uma opção...</option>
                 <option value="limpeza">Limpeza</option>
                 <option value="plantio">Plantio</option>
