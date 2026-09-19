@@ -3,23 +3,33 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import '@/app/globals.css';
+import { FaFacebook } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
+import { FaYoutube } from "react-icons/fa";
 
 export default function NavbarACAJU() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [hoveredSubItem, setHoveredSubItem] = useState(null);
   
-  // Estados para controle de responsividade e menu mobile
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(null);
+  const [navJustify, setNavJustify] = useState("space-around");
 
-  // Monitora o tamanho da tela para alternar entre Desktop e Mobile
   useEffect(() => {
     const handleResize = () => {
-      // Ponto de quebra aumentado para 1200px para evitar esmagamento em tela dividida
-      setIsMobile(window.innerWidth < 1200);
-      if (window.innerWidth >= 1200) {
+      const width = window.innerWidth;
+      
+      setIsMobile(width < 1200);
+      
+      if (width >= 1200) {
         setIsMobileMenuOpen(false); 
+      }
+
+      if (width < 1400) {
+        setNavJustify("space-between");
+      } else {
+        setNavJustify("space-around");
       }
     };
     
@@ -54,15 +64,15 @@ export default function NavbarACAJU() {
             </Link>
             <span style={styles.divider}>|</span>
             <div style={styles.socialIcons}>
-              <span style={styles.icon}>f</span>
-              <span style={styles.icon}>📷</span>
-              <span style={styles.icon}>▶</span>
+              <FaFacebook style={styles.icon} />
+              <FaInstagram style={styles.icon} />
+              <FaYoutube style={styles.icon} />
             </div>
           </div>
         </div>
       )}
 
-      <header style={styles.navbar}>
+      <header style={{ ...styles.navbar, justifyContent: navJustify }}>
         <div style={styles.logoContainer}>
           <span style={styles.logoAc}>AC</span>
           <span style={styles.logoText}>ACAJU</span>
@@ -316,18 +326,17 @@ const styles = {
   },
   socialIcons: {
     display: "flex",
-    gap: "12px",
+    gap: "14px",
     alignItems: "center",
     cursor: "pointer",
   },
   icon: {
-    fontSize: "14px",
+    fontSize: "20px",
   },
   navbar: {
     backgroundColor: "#70233b", 
     color: "#ffffff",
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
     padding: "0 50px",
     height: "70px",
