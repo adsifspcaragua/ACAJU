@@ -1,28 +1,33 @@
 import Link from "next/link";
+import Footer from "../components/Footer";
+import NavbarACAJU from "../components/Navbar";
+
 export default function Home() {
   return (
-    
     <div style={styles.page}>
-       <Link href="../admin/login" style={styles.primaryLink}>Servidor</Link>
+      <NavbarACAJU />
+      
+      <main style={styles.mainContent}>
+
+      </main>
+
+      <Footer />
     </div>
   );
 }
 
 const styles = {
   page: {
-    width: "100vw",             
-    height: "100vh",           
-    display: "flex",            
-    justifyContent: "center",   
-    alignItems: "center",       
+    width: "100%",
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between", 
     margin: 0,
-    padding: "20px",
+    padding: 0, 
     boxSizing: "border-box",
   },
-    primaryLink: {
-    color: "#2e5c31",
-    fontSize: "14px",
-    fontWeight: "Bold",
-    textDecoration: "none",
+  mainContent: {
+    flexGrow: 1, 
   },
 };
