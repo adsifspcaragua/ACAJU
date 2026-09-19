@@ -3,9 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import '@/app/globals.css';
-import { FaFacebook } from "react-icons/fa";
-import { FaInstagram } from "react-icons/fa";
-import { FaYoutube } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 
 export default function NavbarACAJU() {
   const [activeMenu, setActiveMenu] = useState(null);
@@ -73,10 +71,10 @@ export default function NavbarACAJU() {
       )}
 
       <header style={{ ...styles.navbar, justifyContent: navJustify }}>
-        <div style={styles.logoContainer}>
+        <Link href="/" style={styles.logoContainer}>
           <span style={styles.logoAc}>AC</span>
           <span style={styles.logoText}>ACAJU</span>
-        </div>
+        </Link>
 
         {isMobile ? (
           <div 
@@ -88,7 +86,9 @@ export default function NavbarACAJU() {
         ) : (
           <nav>
             <ul style={styles.navList}>
-              <li style={styles.navItem}>Quem Somos</li>
+              <li style={styles.navItem}>
+                <Link href="/quem-somos" style={styles.linkText}>Quem Somos</Link>
+              </li>
 
               <li 
                 style={styles.navItemContainer}
@@ -103,21 +103,25 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('casa')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      A Casa Caiçara
+                      <Link href="/miniMuseu" style={styles.linkText}>A Casa Caiçara</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'inventario-mini' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
                       onMouseEnter={() => setHoveredSubItem('inventario-mini')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      Inventário
+                      <Link href="/inventario" style={styles.linkText}>Inventário</Link>
                     </li>
                   </ul>
                 )}
               </li>
 
-              <li style={styles.navItem}>Notícias</li>
-              <li style={styles.navItem}>Projetos</li>
+              <li style={styles.navItem}>
+                <Link href="/noticias" style={styles.linkText}>Notícias</Link>
+              </li>
+              <li style={styles.navItem}>
+                <Link href="/projetos" style={styles.linkText}>Projetos</Link>
+              </li>
 
               <li 
                 style={styles.navItemContainer}
@@ -132,28 +136,30 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('limpeza')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      Limpeza
+                      <Link href="/mutirao/limpeza" style={styles.linkText}>Limpeza</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'plantio' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
                       onMouseEnter={() => setHoveredSubItem('plantio')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      Plantio
+                      <Link href="/mutirao/plantio" style={styles.linkText}>Plantio</Link>
                     </li>
                   </ul>
                 )}
               </li>
 
-              <li style={styles.navItem}>Memórias Caiçaras</li>
-              <li style={styles.navItem}>Institucional</li>
+              <li style={styles.navItem}>
+                <Link href="/memorias" style={styles.linkText}>Memórias Caiçaras</Link>
+              </li>
+              <li style={styles.navItem}>
+                <Link href="/institucional" style={styles.linkText}>Institucional</Link>
+              </li>
 
-              <li 
-                style={styles.navItemContainer}
-                onMouseEnter={() => handleMouseEnter('fale-conosco')}
-                onMouseLeave={handleMouseLeave}
-              >
-                <span style={styles.navItem}>Fale Conosco ˅</span>
+              <li style={styles.navItemContainer}>
+                <Link href="/fale-conosco" style={styles.linkText}>
+                  <span style={styles.navItem}>Fale Conosco</span>
+                </Link>
               </li>
 
               <li 
@@ -161,7 +167,7 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('participe')}
                 onMouseLeave={handleMouseLeave}
               >
-                <span style={styles.navItem}>Participe</span>
+                <span style={styles.navItem}>Participe ˅</span>
                 {activeMenu === 'participe' && (
                   <ul style={styles.dropdownMenu}>
                     <li 
@@ -169,21 +175,21 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('doacoes')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      Doações
+                      <Link href="/doacoes" style={styles.linkText}>Doações</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'inventario-part' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
                       onMouseEnter={() => setHoveredSubItem('inventario-part')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      Inventário Participativo
+                      <Link href="/inventario-participativo" style={styles.linkText}>Inventário Participativo</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'trocas' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
                       onMouseEnter={() => setHoveredSubItem('trocas')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      Trocas
+                      <Link href="/trocas" style={styles.linkText}>Trocas</Link>
                     </li>
                   </ul>
                 )}
@@ -207,7 +213,9 @@ export default function NavbarACAJU() {
           </div>
 
           <div style={styles.mobileNavList}>
-            <div style={styles.mobileNavItem}>Quem Somos</div>
+            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/quem-somos" style={styles.linkText}>Quem Somos</Link>
+            </div>
             
             <div style={styles.mobileAccordionGroup}>
               <div 
@@ -219,14 +227,22 @@ export default function NavbarACAJU() {
               </div>
               {openAccordion === 'mini-museu' && (
                 <div style={styles.mobileSubList}>
-                  <div style={styles.mobileSubItem}>A Casa Caiçara</div>
-                  <div style={styles.mobileSubItem}>Inventário</div>
+                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/miniMuseu" style={styles.linkText}>A Casa Caiçara</Link>
+                  </div>
+                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/inventario" style={styles.linkText}>Inventário</Link>
+                  </div>
                 </div>
               )}
             </div>
 
-            <div style={styles.mobileNavItem}>Notícias</div>
-            <div style={styles.mobileNavItem}>Projetos</div>
+            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/noticias" style={styles.linkText}>Notícias</Link>
+            </div>
+            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/projetos" style={styles.linkText}>Projetos</Link>
+            </div>
 
             <div style={styles.mobileAccordionGroup}>
               <div 
@@ -238,23 +254,25 @@ export default function NavbarACAJU() {
               </div>
               {openAccordion === 'mutirao' && (
                 <div style={styles.mobileSubList}>
-                  <div style={styles.mobileSubItem}>Limpeza</div>
-                  <div style={styles.mobileSubItem}>Plantio</div>
+                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/mutirao/limpeza" style={styles.linkText}>Limpeza</Link>
+                  </div>
+                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/mutirao/plantio" style={styles.linkText}>Plantio</Link>
+                  </div>
                 </div>
               )}
             </div>
 
-            <div style={styles.mobileNavItem}>Memórias Caiçaras</div>
-            <div style={styles.mobileNavItem}>Institucional</div>
+            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/memorias" style={styles.linkText}>Memórias Caiçaras</Link>
+            </div>
+            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/institucional" style={styles.linkText}>Institucional</Link>
+            </div>
 
-            <div style={styles.mobileAccordionGroup}>
-              <div 
-                style={styles.mobileNavItem} 
-                onClick={() => toggleAccordion('fale-conosco')}
-              >
-                <span>Fale Conosco</span>
-                <span style={styles.accordionIcon}>{openAccordion === 'fale-conosco' ? '▲' : '▼'}</span>
-              </div>
+            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/fale-conosco" style={styles.linkText}>Fale Conosco</Link>
             </div>
 
             <div style={styles.mobileAccordionGroup}>
@@ -267,9 +285,15 @@ export default function NavbarACAJU() {
               </div>
               {openAccordion === 'participe' && (
                 <div style={styles.mobileSubList}>
-                  <div style={styles.mobileSubItem}>Doações</div>
-                  <div style={styles.mobileSubItem}>Inventário Participativo</div>
-                  <div style={styles.mobileSubItem}>Trocas</div>
+                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/doacoes" style={styles.linkText}>Doações</Link>
+                  </div>
+                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/inventario-participativo" style={styles.linkText}>Inventário Participativo</Link>
+                  </div>
+                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/trocas" style={styles.linkText}>Trocas</Link>
+                  </div>
                 </div>
               )}
             </div>
@@ -352,6 +376,8 @@ const styles = {
     fontSize: "22px",
     fontWeight: "bold",
     cursor: "pointer",
+    textDecoration: "none",
+    color: "#ffffff",
   },
   logoAc: {
     backgroundColor: "#ffffff",
@@ -395,6 +421,12 @@ const styles = {
     transition: "opacity 0.2s",
     whiteSpace: "nowrap", 
   },
+  linkText: {
+    color: "inherit",
+    textDecoration: "none",
+    width: "100%",
+    display: "block",
+  },
   dropdownMenu: {
     position: "absolute",
     top: "70px", 
@@ -420,7 +452,6 @@ const styles = {
   dropdownItemHover: {
     backgroundColor: "#3a0e1a", 
   },
-  
   mobileOverlay: {
     position: "fixed",
     top: 0,
