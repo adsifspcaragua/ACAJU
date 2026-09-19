@@ -8,9 +8,9 @@ export default function Footer() {
     <footer style={styles.footer}>
       <div style={styles.container}>
         
-        <div className="footer-grid" style={styles.grid}>
+        <div style={styles.grid}>
           
-          <div style={styles.brandColumn}>
+          <div style={styles.section}>
             <div style={styles.logoRow}>
               <div style={styles.logoBadge}>AC</div>
               <span style={styles.logoText}>ACAJU</span>
@@ -19,14 +19,14 @@ export default function Footer() {
               Associação Caiçara Juqueriquerê — guardiões da cultura e do Rio Juqueriquerê desde 2000.
             </p>
             <div style={styles.socialDots}>
-              <span style={{ ...styles.dot, backgroundColor: "#782846" }} />
-              <span style={{ ...styles.dot, backgroundColor: "#782846" }} />
-              <span style={{ ...styles.dot, backgroundColor: "#e8c3ad" }} />
-              <span style={{ ...styles.dot, backgroundColor: "#782846" }} />
+              <span style={{ ...styles.dot, backgroundColor: "#802d48" }} />
+              <span style={{ ...styles.dot, backgroundColor: "#802d48" }} />
+              <span style={{ ...styles.dot, backgroundColor: "#f2c9b1" }} />
+              <span style={{ ...styles.dot, backgroundColor: "#802d48" }} />
             </div>
           </div>
 
-          <div style={styles.navColumn}>
+          <div style={styles.section}>
             <h4 style={styles.columnTitle}>INSTITUCIONAL</h4>
             <ul style={styles.linkList}>
               <li><Link href="/quem-somos" style={styles.link}>Quem Somos</Link></li>
@@ -37,7 +37,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div style={styles.navColumn}>
+          <div style={styles.section}>
             <h4 style={styles.columnTitle}>PARTICIPE</h4>
             <ul style={styles.linkList}>
               <li><Link href="/doacoes" style={styles.link}>Doações</Link></li>
@@ -48,15 +48,15 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div style={styles.contactColumn}>
+          <div style={styles.section}>
             <h4 style={styles.columnTitle}>CONTATO</h4>
             <address style={styles.address}>
               Rua Izamira Pinto Santana, 560<br />
               Porto Novo — Caraguatatuba, SP
             </address>
             <div style={styles.contactLinks}>
-              <Link href="/fale-conosco" style={styles.arrowLink}>Fale Conosco →</Link>
-              <Link href="/canal-denuncias" style={styles.arrowLink}>Canal de Denúncias →</Link>
+              <Link href="/fale-conosco" style={styles.darkLink}>Fale Conosco →</Link>
+              <Link href="/canal-denuncias" style={styles.darkLink}>Canal de Denúncias →</Link>
             </div>
           </div>
 
@@ -64,35 +64,21 @@ export default function Footer() {
 
         <hr style={styles.divider} />
 
-        <div className="footer-bottom" style={styles.bottomRow}>
+        <div style={styles.bottomRow}>
           <span>© 2000–2026 ACAJU — Associação Caiçara Juqueriquerê</span>
           <span>Caraguatatuba, litoral norte paulista</span>
         </div>
 
       </div>
-
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .footer-grid {
-            grid-template-columns: 1fr !important;
-            gap: 36px !important;
-          }
-          .footer-bottom {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 8px !important;
-          }
-        }
-      `}</style>
     </footer>
   );
 }
 
 const styles = {
   footer: {
-    backgroundColor: "#21151b",
-    color: "#c9b8be",
-    padding: "48px 24px 30px 24px",
+    backgroundColor: "#221319",
+    color: "#bba8b0",
+    padding: "48px 24px 32px 24px",
     fontFamily: "inherit",
     width: "100%",
     boxSizing: "border-box",
@@ -100,17 +86,20 @@ const styles = {
   container: {
     maxWidth: "1140px",
     margin: "0 auto",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "30px",
-    marginBottom: "40px",
-  },
-  brandColumn: {
     display: "flex",
     flexDirection: "column",
-    gap: "16px",
+    gap: "32px",
+  },
+
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "36px",
+  },
+  section: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "14px",
   },
   logoRow: {
     display: "flex",
@@ -118,9 +107,9 @@ const styles = {
     gap: "12px",
   },
   logoBadge: {
-    backgroundColor: "#782846",
+    backgroundColor: "#802d48",
     color: "#ffffff",
-    fontWeight: "bold",
+    fontWeight: "600",
     fontSize: "14px",
     width: "36px",
     height: "36px",
@@ -131,21 +120,21 @@ const styles = {
   },
   logoText: {
     color: "#ffffff",
-    fontWeight: "bold",
+    fontWeight: "700",
     fontSize: "20px",
-    letterSpacing: "1px",
+    letterSpacing: "0.5px",
   },
   description: {
     fontSize: "13px",
-    lineHeight: "1.6",
-    color: "#a39399",
+    lineHeight: "1.5",
+    color: "#bba8b0",
     margin: 0,
     maxWidth: "280px",
   },
   socialDots: {
     display: "flex",
-    gap: "10px",
-    marginTop: "4px",
+    gap: "8px",
+    marginTop: "2px",
   },
   dot: {
     width: "12px",
@@ -153,22 +142,13 @@ const styles = {
     borderRadius: "50%",
     display: "inline-block",
   },
-  navColumn: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-  },
-  contactColumn: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-  },
   columnTitle: {
-    color: "#f5e6eb",
-    fontSize: "12px",
-    fontWeight: "bold",
-    letterSpacing: "1px",
+    color: "#f3c299",
+    fontSize: "11px",
+    fontWeight: "700",
+    letterSpacing: "0.8px",
     margin: 0,
+    textTransform: "uppercase",
   },
   linkList: {
     listStyle: "none",
@@ -176,41 +156,43 @@ const styles = {
     margin: 0,
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
+    gap: "8px",
   },
   link: {
-    color: "#a39399",
+    color: "#bba8b0",
     textDecoration: "none",
-    fontSize: "14px",
+    fontSize: "13px",
   },
   address: {
     fontStyle: "normal",
-    fontSize: "14px",
-    color: "#a39399",
+    fontSize: "13px",
+    color: "#bba8b0",
     lineHeight: "1.5",
   },
   contactLinks: {
     display: "flex",
     flexDirection: "column",
-    gap: "8px",
+    gap: "6px",
     marginTop: "4px",
   },
-  arrowLink: {
-    color: "#572132",
+  darkLink: {
+    color: "#4e1d2b",
     textDecoration: "none",
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "500",
   },
   divider: {
     border: "none",
-    borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-    margin: "0 0 25px 0",
+    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+    margin: "8px 0 0 0",
   },
   bottomRow: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     fontSize: "12px",
-    color: "#7a6b71",
+    color: "#6e5d65",
+    flexWrap: "wrap",
+    gap: "12px",
   },
 };
