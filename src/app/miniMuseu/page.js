@@ -59,7 +59,7 @@ const styles = {
   },
 
   paragraph: {
-    fontSize: "16px",
+    fontSize: "18px",
     lineHeight: "1.8",
     margin: "0 0 25px 0",
     color: "#4A4A4A",
