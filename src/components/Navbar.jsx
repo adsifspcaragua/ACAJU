@@ -63,8 +63,12 @@ export default function NavbarACAJU() {
             <span style={styles.divider}>|</span>
             <div style={styles.socialIcons}>
               <FaFacebook style={styles.icon} />
-              <FaInstagram style={styles.icon} />
-              <FaYoutube style={styles.icon} />
+              <Link href="https://www.instagram.com/acajucaraguatatuba/" target="_blank" rel="noopener noreferrer">
+                <FaInstagram style={styles.icon} />
+              </Link>
+              <Link href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+                <FaYoutube style={styles.icon} />
+              </Link>
             </div>
           </div>
         </div>
@@ -95,7 +99,7 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('mini-museu')}
                 onMouseLeave={handleMouseLeave}
               >
-                <span style={styles.navItem}>Mini-Museu ˅</span>
+                <span style={styles.navItem}>Mini-Museu</span>
                 {activeMenu === 'mini-museu' && (
                   <ul style={styles.dropdownMenu}>
                     <li 
@@ -103,7 +107,7 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('casa')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/miniMuseu" style={styles.linkText}>A Casa Caiçara</Link>
+                      <Link href="/miniMuseu" style={styles.linkText}>Casa-Caiçara</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'inventario-mini' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
@@ -167,7 +171,7 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('participe')}
                 onMouseLeave={handleMouseLeave}
               >
-                <span style={styles.navItem}>Participe ˅</span>
+                <span style={styles.navItem}>Participe</span>
                 {activeMenu === 'participe' && (
                   <ul style={styles.dropdownMenu}>
                     <li 
