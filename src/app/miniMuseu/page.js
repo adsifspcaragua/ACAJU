@@ -64,6 +64,7 @@ const styles = {
     margin: "0 0 25px 0",
     color: "#4A4A4A",
     textAlign: "justify",
+    fontFamily: "'Poppins', 'Segoe UI', sans-serif",
   },
   
   boldHighlight: {
