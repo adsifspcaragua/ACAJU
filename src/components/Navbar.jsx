@@ -62,11 +62,13 @@ export default function NavbarACAJU() {
             </Link>
             <span style={styles.divider}>|</span>
             <div style={styles.socialIcons}>
-              <FaFacebook style={styles.icon} />
-              <Link href="https://www.instagram.com/acajucaraguatatuba/" target="_blank" rel="noopener noreferrer">
+              <Link href="https://www.facebook.com/tudapaes" target="_blank" rel="noopener noreferrer" style={styles.socialLink}>
+                <FaFacebook style={styles.icon} />
+              </Link>
+              <Link href="https://www.instagram.com/acajucaraguatatuba/" target="_blank" rel="noopener noreferrer" style={styles.socialLink}>
                 <FaInstagram style={styles.icon} />
               </Link>
-              <Link href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+              <Link href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink}>
                 <FaYoutube style={styles.icon} />
               </Link>
             </div>
@@ -90,16 +92,22 @@ export default function NavbarACAJU() {
         ) : (
           <nav>
             <ul style={styles.navList}>
-              <li style={styles.navItem}>
-                <Link href="/quem-somos" style={styles.linkText}>Quem Somos</Link>
+              <li 
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'quem-somos' ? styles.navItemContainerHover : {}) }}
+                onMouseEnter={() => handleMouseEnter('quem-somos')}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Link href="/quem-somos" style={styles.linkText}>
+                  <span style={styles.navItem}>Quem Somos</span>
+                </Link>
               </li>
 
               <li 
-                style={styles.navItemContainer}
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'mini-museu' ? styles.navItemContainerHover : {}) }}
                 onMouseEnter={() => handleMouseEnter('mini-museu')}
                 onMouseLeave={handleMouseLeave}
               >
-                <span style={styles.navItem}>Mini-Museu</span>
+                <span style={styles.navItem}>Mini-Museu ˅</span>
                 {activeMenu === 'mini-museu' && (
                   <ul style={styles.dropdownMenu}>
                     <li 
@@ -120,15 +128,28 @@ export default function NavbarACAJU() {
                 )}
               </li>
 
-              <li style={styles.navItem}>
-                <Link href="/noticias" style={styles.linkText}>Notícias</Link>
+              <li 
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'noticias' ? styles.navItemContainerHover : {}) }}
+                onMouseEnter={() => handleMouseEnter('noticias')}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Link href="/noticias" style={styles.linkText}>
+                  <span style={styles.navItem}>Notícias</span>
+                </Link>
               </li>
-              <li style={styles.navItem}>
-                <Link href="/projetos" style={styles.linkText}>Projetos</Link>
+              
+              <li 
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'projetos' ? styles.navItemContainerHover : {}) }}
+                onMouseEnter={() => handleMouseEnter('projetos')}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Link href="/projetos" style={styles.linkText}>
+                  <span style={styles.navItem}>Projetos</span>
+                </Link>
               </li>
 
               <li 
-                style={styles.navItemContainer}
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'mutirao' ? styles.navItemContainerHover : {}) }}
                 onMouseEnter={() => handleMouseEnter('mutirao')}
                 onMouseLeave={handleMouseLeave}
               >
@@ -153,21 +174,38 @@ export default function NavbarACAJU() {
                 )}
               </li>
 
-              <li style={styles.navItem}>
-                <Link href="/memorias" style={styles.linkText}>Memórias Caiçaras</Link>
+              <li 
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'memorias' ? styles.navItemContainerHover : {}) }}
+                onMouseEnter={() => handleMouseEnter('memorias')}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Link href="/memorias" style={styles.linkText}>
+                  <span style={styles.navItem}>Memórias Caiçaras</span>
+                </Link>
               </li>
-              <li style={styles.navItem}>
-                <Link href="/institucional" style={styles.linkText}>Institucional</Link>
+              
+              <li 
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'institucional' ? styles.navItemContainerHover : {}) }}
+                onMouseEnter={() => handleMouseEnter('institucional')}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Link href="/institucional" style={styles.linkText}>
+                  <span style={styles.navItem}>Institucional</span>
+                </Link>
               </li>
 
-              <li style={styles.navItemContainer}>
+              <li 
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'fale-conosco' ? styles.navItemContainerHover : {}) }}
+                onMouseEnter={() => handleMouseEnter('fale-conosco')}
+                onMouseLeave={handleMouseLeave}
+              >
                 <Link href="/fale-conosco" style={styles.linkText}>
                   <span style={styles.navItem}>Fale Conosco</span>
                 </Link>
               </li>
 
               <li 
-                style={styles.navItemContainer}
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'participe' ? styles.navItemContainerHover : {}) }}
                 onMouseEnter={() => handleMouseEnter('participe')}
                 onMouseLeave={handleMouseLeave}
               >
@@ -358,6 +396,12 @@ const styles = {
     alignItems: "center",
     cursor: "pointer",
   },
+  socialLink: {
+    color: "inherit",
+    textDecoration: "none",
+    display: "flex",
+    alignItems: "center",
+  },
   icon: {
     fontSize: "20px",
   },
@@ -407,13 +451,18 @@ const styles = {
     margin: 0,
     padding: 0,
     alignItems: "center",
-    gap: "22px", 
+    gap: "0px", 
   },
   navItemContainer: {
     position: "relative",
     height: "70px", 
     display: "flex",
     alignItems: "center",
+    padding: "0 14px",
+    transition: "background-color 0.2s",
+  },
+  navItemContainerHover: {
+    backgroundColor: "#541527",
   },
   navItem: {
     fontSize: "14px",
@@ -422,7 +471,6 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "4px",
-    transition: "opacity 0.2s",
     whiteSpace: "nowrap", 
   },
   linkText: {
