@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -25,6 +20,7 @@ model ADM {
   mutirao   Mutirao[]
   documents Document[]
   miniMuseu MiniMuseumItem[]
+  projects  Project[]
 }
 
 model ADMLOG {
@@ -123,17 +119,30 @@ model Mutirao {
   ADM     ADM    @relation(fields: [adminId], references: [id])
 }
 
-//model Project {
-//  id            String   @id @default(uuid())
-//  title         String
-//  coordinator   String
-//  objective     String   @db.Text
-//  bodyContent   String   @db.Text
-//  coverImage    String?
-//  videoUrl      String?
-//  createdAt     DateTime @default(now())
-//  galleryImages Json?
-//}
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  coordinator String
+  objective   String   @db.Text
+  bodyContent String   @db.Text
+  coverImage  String?
+  videoUrl    String?
+  createdAt   DateTime @default(now())
+
+  adminId String
+  ADM     ADM    @relation(fields: [adminId], references: [id])
+
+  images ProjectImage[]
+}
+
+model ProjectImage {
+  id        String   @id @default(uuid())
+  url       String
+  createdAt DateTime @default(now())
+
+  projectId String
+  mutirao   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
 
 // model Memory {
 //  id            String   @id @default(uuid())
@@ -156,19 +165,18 @@ model Document {
   ADM     ADM    @relation(fields: [adminId], references: [id])
 }
 
-
 // novas adições que terão de ser conversadas 
 
 model MiniMuseumItem {
-  id          String   @id @default(uuid())
-  title       String   
-  description String?  @db.Text
-  imageUrl    String   
+  id          String  @id @default(uuid())
+  title       String
+  description String? @db.Text
+  imageUrl    String
   year        String?
-  
-  adminId     String
-  ADM         ADM      @relation(fields: [adminId], references: [id])
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  adminId String
+  ADM     ADM    @relation(fields: [adminId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
