@@ -93,11 +93,11 @@ export default function NavbarACAJU() {
           <nav>
             <ul style={styles.navList}>
               <li 
-                style={{ ...styles.navItemContainer, ...(activeMenu === 'quem-somos' ? styles.navItemContainerHover : {}) }}
-                onMouseEnter={() => handleMouseEnter('quem-somos')}
+                style={{ ...styles.navItemContainer, ...(activeMenu === 'sobreNos' ? styles.navItemContainerHover : {}) }}
+                onMouseEnter={() => handleMouseEnter('sobreNos')}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/quem-somos" style={styles.linkText}>
+                <Link href="/sobreNos" style={styles.linkText}>
                   <span style={styles.navItem}>Quem Somos</span>
                 </Link>
               </li>
@@ -115,7 +115,7 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('casa')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/miniMuseu" style={styles.linkText}>Casa-Caiçara</Link>
+                      <Link href="/miniMuseu/casa-caicara" style={styles.linkText}>Casa-Caiçara</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'inventario-mini' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
@@ -179,7 +179,7 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('memorias')}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/memorias" style={styles.linkText}>
+                <Link href="/memoriasCaicaras" style={styles.linkText}>
                   <span style={styles.navItem}>Memórias Caiçaras</span>
                 </Link>
               </li>
@@ -199,7 +199,7 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('fale-conosco')}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/fale-conosco" style={styles.linkText}>
+                <Link href="/faleConosco" style={styles.linkText}>
                   <span style={styles.navItem}>Fale Conosco</span>
                 </Link>
               </li>
@@ -217,21 +217,21 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('doacoes')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/doacoes" style={styles.linkText}>Doações</Link>
+                      <Link href="/participe/doacoes" style={styles.linkText}>Doações</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'inventario-part' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
                       onMouseEnter={() => setHoveredSubItem('inventario-part')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/inventario-participativo" style={styles.linkText}>Inventário Participativo</Link>
+                      <Link href="/participe/inventarioParticipativo" style={styles.linkText}>Inventário Participativo</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'trocas' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
                       onMouseEnter={() => setHoveredSubItem('trocas')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/trocas" style={styles.linkText}>Trocas</Link>
+                      <Link href="/participe/trocas" style={styles.linkText}>Trocas</Link>
                     </li>
                   </ul>
                 )}
@@ -256,7 +256,7 @@ export default function NavbarACAJU() {
 
           <div style={styles.mobileNavList}>
             <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
-              <Link href="/quem-somos" style={styles.linkText}>Quem Somos</Link>
+              <Link href="/sobreNos" style={styles.linkText}>Quem Somos</Link>
             </div>
             
             <div style={styles.mobileAccordionGroup}>
@@ -270,7 +270,7 @@ export default function NavbarACAJU() {
               {openAccordion === 'mini-museu' && (
                 <div style={styles.mobileSubList}>
                   <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/miniMuseu" style={styles.linkText}>A Casa Caiçara</Link>
+                    <Link href="/miniMuseu/casa-caicara" style={styles.linkText}>A Casa Caiçara</Link>
                   </div>
                   <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
                     <Link href="/inventario" style={styles.linkText}>Inventário</Link>
@@ -307,14 +307,14 @@ export default function NavbarACAJU() {
             </div>
 
             <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
-              <Link href="/memorias" style={styles.linkText}>Memórias Caiçaras</Link>
+              <Link href="/memoriasCaicaras" style={styles.linkText}>Memórias Caiçaras</Link>
             </div>
             <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
               <Link href="/institucional" style={styles.linkText}>Institucional</Link>
             </div>
 
             <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
-              <Link href="/fale-conosco" style={styles.linkText}>Fale Conosco</Link>
+              <Link href="/faleConosco" style={styles.linkText}>Fale Conosco</Link>
             </div>
 
             <div style={styles.mobileAccordionGroup}>
@@ -328,13 +328,13 @@ export default function NavbarACAJU() {
               {openAccordion === 'participe' && (
                 <div style={styles.mobileSubList}>
                   <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/doacoes" style={styles.linkText}>Doações</Link>
+                    <Link href="/participe/doacoes" style={styles.linkText}>Doações</Link>
                   </div>
                   <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/inventario-participativo" style={styles.linkText}>Inventário Participativo</Link>
+                    <Link href="/participe/inventarioParticipativo" style={styles.linkText}>Inventário Participativo</Link>
                   </div>
                   <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/trocas" style={styles.linkText}>Trocas</Link>
+                    <Link href="/participe/trocas" style={styles.linkText}>Trocas</Link>
                   </div>
                 </div>
               )}
