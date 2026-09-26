@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import '@/app/globals.css';
 import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 
@@ -13,6 +14,8 @@ export default function NavbarACAJU() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(null);
   const [navJustify, setNavJustify] = useState("space-around");
+  
+  const [hoveredMobileItem, setHoveredMobileItem] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -78,7 +81,13 @@ export default function NavbarACAJU() {
 
       <header style={{ ...styles.navbar, justifyContent: navJustify }}>
         <Link href="/" style={styles.logoContainer}>
-          <span style={styles.logoAc}>AC</span>
+          <Image 
+            src="/logo-only.svg" 
+            alt="Logo ACAJU" 
+            width={42} 
+            height={42} 
+            priority
+          />
           <span style={styles.logoText}>ACAJU</span>
         </Link>
 
@@ -115,14 +124,14 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('casa')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/miniMuseu" style={styles.linkText}>Casa-Caiçara</Link>
+                      <Link href="/miniMuseu/casa-caicara">Casa Caiçara</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'inventario-mini' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
                       onMouseEnter={() => setHoveredSubItem('inventario-mini')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/inventario" style={styles.linkText}>Inventário</Link>
+                      <Link href="/inventario" style={styles.linkText}>Acervo</Link>
                     </li>
                   </ul>
                 )}
@@ -199,9 +208,18 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('fale-conosco')}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/fale-conosco" style={styles.linkText}>
-                  <span style={styles.navItem}>Fale Conosco</span>
-                </Link>
+                <span style={styles.navItem}>Fale Conosco ˅</span>
+                {activeMenu === 'fale-conosco' && (
+                  <ul style={styles.dropdownMenu}>
+                    <li 
+                      style={hoveredSubItem === 'contato' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
+                      onMouseEnter={() => setHoveredSubItem('contato')}
+                      onMouseLeave={() => setHoveredSubItem(null)}
+                    >
+                      <Link href="/fale-conosco" style={styles.linkText}>Contato</Link>
+                    </li>
+                  </ul>
+                )}
               </li>
 
               <li 
@@ -209,7 +227,7 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('participe')}
                 onMouseLeave={handleMouseLeave}
               >
-                <span style={styles.navItem}>Participe</span>
+                <span style={styles.navItem}>Participe ˅</span>
                 {activeMenu === 'participe' && (
                   <ul style={styles.dropdownMenu}>
                     <li 
@@ -245,7 +263,12 @@ export default function NavbarACAJU() {
       {isMobile && isMobileMenuOpen && (
         <div style={styles.mobileOverlay}>
           <div style={styles.mobileHeader}>
-            <div style={styles.logoAc}>AC</div>
+            <Image 
+              src="/logo-only.svg" 
+              alt="Logo ACAJU" 
+              width={38} 
+              height={38} 
+            />
             <div 
               style={styles.closeBtn} 
               onClick={() => setIsMobileMenuOpen(false)}
@@ -255,85 +278,173 @@ export default function NavbarACAJU() {
           </div>
 
           <div style={styles.mobileNavList}>
-            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+            <div 
+              style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'quem-somos' ? styles.mobileNavItemHover : {}) }} 
+              onClick={() => setIsMobileMenuOpen(false)}
+              onMouseEnter={() => setHoveredMobileItem('quem-somos')}
+              onMouseLeave={() => setHoveredMobileItem(null)}
+            >
               <Link href="/quem-somos" style={styles.linkText}>Quem Somos</Link>
             </div>
             
             <div style={styles.mobileAccordionGroup}>
               <div 
-                style={styles.mobileNavItem} 
+                style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'mini-museu' ? styles.mobileNavItemHover : {}) }} 
                 onClick={() => toggleAccordion('mini-museu')}
+                onMouseEnter={() => setHoveredMobileItem('mini-museu')}
+                onMouseLeave={() => setHoveredMobileItem(null)}
               >
                 <span>Mini-Museu</span>
                 <span style={styles.accordionIcon}>{openAccordion === 'mini-museu' ? '▲' : '▼'}</span>
               </div>
               {openAccordion === 'mini-museu' && (
                 <div style={styles.mobileSubList}>
-                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/miniMuseu" style={styles.linkText}>A Casa Caiçara</Link>
+                  <div 
+                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-casa' ? styles.mobileSubItemHover : {}) }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => setHoveredMobileItem('sub-casa')}
+                    onMouseLeave={() => setHoveredMobileItem(null)}
+                  >
+                    <Link href="/miniMuseu/casa-caicara">Casa Caiçara</Link>
                   </div>
-                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/inventario" style={styles.linkText}>Inventário</Link>
+                  <div 
+                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-acervo' ? styles.mobileSubItemHover : {}) }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => setHoveredMobileItem('sub-acervo')}
+                    onMouseLeave={() => setHoveredMobileItem(null)}
+                  >
+                    <Link href="/inventario" style={styles.linkText}>Acervo</Link>
                   </div>
                 </div>
               )}
             </div>
 
-            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+            <div 
+              style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'noticias' ? styles.mobileNavItemHover : {}) }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              onMouseEnter={() => setHoveredMobileItem('noticias')}
+              onMouseLeave={() => setHoveredMobileItem(null)}
+            >
               <Link href="/noticias" style={styles.linkText}>Notícias</Link>
             </div>
-            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+            
+            <div 
+              style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'projetos' ? styles.mobileNavItemHover : {}) }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              onMouseEnter={() => setHoveredMobileItem('projetos')}
+              onMouseLeave={() => setHoveredMobileItem(null)}
+            >
               <Link href="/projetos" style={styles.linkText}>Projetos</Link>
             </div>
 
             <div style={styles.mobileAccordionGroup}>
               <div 
-                style={styles.mobileNavItem} 
+                style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'mutirao' ? styles.mobileNavItemHover : {}) }} 
                 onClick={() => toggleAccordion('mutirao')}
+                onMouseEnter={() => setHoveredMobileItem('mutirao')}
+                onMouseLeave={() => setHoveredMobileItem(null)}
               >
                 <span>Mutirão</span>
                 <span style={styles.accordionIcon}>{openAccordion === 'mutirao' ? '▲' : '▼'}</span>
               </div>
               {openAccordion === 'mutirao' && (
                 <div style={styles.mobileSubList}>
-                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                  <div 
+                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-limpeza' ? styles.mobileSubItemHover : {}) }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => setHoveredMobileItem('sub-limpeza')}
+                    onMouseLeave={() => setHoveredMobileItem(null)}
+                  >
                     <Link href="/mutirao/limpeza" style={styles.linkText}>Limpeza</Link>
                   </div>
-                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                  <div 
+                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-plantio' ? styles.mobileSubItemHover : {}) }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => setHoveredMobileItem('sub-plantio')}
+                    onMouseLeave={() => setHoveredMobileItem(null)}
+                  >
                     <Link href="/mutirao/plantio" style={styles.linkText}>Plantio</Link>
                   </div>
                 </div>
               )}
             </div>
 
-            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+            <div 
+              style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'memorias' ? styles.mobileNavItemHover : {}) }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              onMouseEnter={() => setHoveredMobileItem('memorias')}
+              onMouseLeave={() => setHoveredMobileItem(null)}
+            >
               <Link href="/memorias" style={styles.linkText}>Memórias Caiçaras</Link>
             </div>
-            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
+            
+            <div 
+              style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'institucional' ? styles.mobileNavItemHover : {}) }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              onMouseEnter={() => setHoveredMobileItem('institucional')}
+              onMouseLeave={() => setHoveredMobileItem(null)}
+            >
               <Link href="/institucional" style={styles.linkText}>Institucional</Link>
-            </div>
-
-            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
-              <Link href="/fale-conosco" style={styles.linkText}>Fale Conosco</Link>
             </div>
 
             <div style={styles.mobileAccordionGroup}>
               <div 
-                style={styles.mobileNavItem} 
+                style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'fale-conosco' ? styles.mobileNavItemHover : {}) }} 
+                onClick={() => toggleAccordion('fale-conosco')}
+                onMouseEnter={() => setHoveredMobileItem('fale-conosco')}
+                onMouseLeave={() => setHoveredMobileItem(null)}
+              >
+                <span>Fale Conosco</span>
+                <span style={styles.accordionIcon}>{openAccordion === 'fale-conosco' ? '▲' : '▼'}</span>
+              </div>
+              {openAccordion === 'fale-conosco' && (
+                <div style={styles.mobileSubList}>
+                  <div 
+                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-contato' ? styles.mobileSubItemHover : {}) }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => setHoveredMobileItem('sub-contato')}
+                    onMouseLeave={() => setHoveredMobileItem(null)}
+                  >
+                    <Link href="/fale-conosco" style={styles.linkText}>Contato</Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div style={styles.mobileAccordionGroup}>
+              <div 
+                style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'participe' ? styles.mobileNavItemHover : {}) }} 
                 onClick={() => toggleAccordion('participe')}
+                onMouseEnter={() => setHoveredMobileItem('participe')}
+                onMouseLeave={() => setHoveredMobileItem(null)}
               >
                 <span>Participe</span>
                 <span style={styles.accordionIcon}>{openAccordion === 'participe' ? '▲' : '▼'}</span>
               </div>
               {openAccordion === 'participe' && (
                 <div style={styles.mobileSubList}>
-                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                  <div 
+                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-doacoes' ? styles.mobileSubItemHover : {}) }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => setHoveredMobileItem('sub-doacoes')}
+                    onMouseLeave={() => setHoveredMobileItem(null)}
+                  >
                     <Link href="/doacoes" style={styles.linkText}>Doações</Link>
                   </div>
-                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                  <div 
+                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-inv-part' ? styles.mobileSubItemHover : {}) }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => setHoveredMobileItem('sub-inv-part')}
+                    onMouseLeave={() => setHoveredMobileItem(null)}
+                  >
                     <Link href="/inventario-participativo" style={styles.linkText}>Inventário Participativo</Link>
                   </div>
-                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                  <div 
+                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-trocas' ? styles.mobileSubItemHover : {}) }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => setHoveredMobileItem('sub-trocas')}
+                    onMouseLeave={() => setHoveredMobileItem(null)}
+                  >
                     <Link href="/trocas" style={styles.linkText}>Trocas</Link>
                   </div>
                 </div>
@@ -356,7 +467,7 @@ const styles = {
     fontFamily: "'Poppins', sans-serif", 
   },
   topBar: {
-    backgroundColor: "#5a1b2d",
+    backgroundColor: "#4F0505", 
     color: "#e5e7eb",
     display: "flex",
     justifyContent: "space-between",
@@ -406,7 +517,7 @@ const styles = {
     fontSize: "20px",
   },
   navbar: {
-    backgroundColor: "#70233b", 
+    backgroundColor: "#740405", 
     color: "#ffffff",
     display: "flex",
     alignItems: "center",
@@ -420,20 +531,12 @@ const styles = {
   logoContainer: {
     display: "flex",
     alignItems: "center",
-    gap: "8px",
+    gap: "12px",
     fontSize: "22px",
     fontWeight: "bold",
     cursor: "pointer",
     textDecoration: "none",
     color: "#ffffff",
-  },
-  logoAc: {
-    backgroundColor: "#ffffff",
-    color: "#70233b",
-    padding: "4px 6px",
-    borderRadius: "4px",
-    fontSize: "16px",
-    fontWeight: "bold",
   },
   logoText: {
     letterSpacing: "1px",
@@ -462,7 +565,7 @@ const styles = {
     transition: "background-color 0.2s",
   },
   navItemContainerHover: {
-    backgroundColor: "#541527",
+    backgroundColor: "#4F0505", 
   },
   navItem: {
     fontSize: "14px",
@@ -483,7 +586,7 @@ const styles = {
     position: "absolute",
     top: "70px", 
     left: "0",
-    backgroundColor: "#541527", 
+    backgroundColor: "#4F0505", 
     minWidth: "220px",
     listStyle: "none",
     margin: 0,
@@ -502,15 +605,17 @@ const styles = {
     whiteSpace: "nowrap",
   },
   dropdownItemHover: {
-    backgroundColor: "#3a0e1a", 
+    backgroundColor: "#740405", 
   },
+  
+  // MENU MOBILE / TELA DIVIDIDA
   mobileOverlay: {
     position: "fixed",
     top: 0,
     left: 0,
     width: "100vw",
     height: "100vh",
-    backgroundColor: "#70233b", 
+    backgroundColor: "#740405", 
     zIndex: 100000, 
     display: "flex",
     flexDirection: "column",
@@ -531,14 +636,14 @@ const styles = {
   mobileNavList: {
     display: "flex",
     flexDirection: "column",
-    padding: "10px 24px 40px 24px",
+    padding: "10px 0 40px 0", 
   },
   mobileAccordionGroup: {
     display: "flex",
     flexDirection: "column",
   },
   mobileNavItem: {
-    padding: "20px 0",
+    padding: "20px 24px", 
     fontSize: "15px",
     fontWeight: "600",
     color: "#ffffff",
@@ -547,6 +652,10 @@ const styles = {
     alignItems: "center",
     borderBottom: "1px solid rgba(255, 255, 255, 0.15)",
     cursor: "pointer",
+    transition: "background-color 0.2s",
+  },
+  mobileNavItemHover: {
+    backgroundColor: "#4F0505", 
   },
   accordionIcon: {
     fontSize: "12px",
@@ -554,18 +663,23 @@ const styles = {
   },
   mobileSubList: {
     backgroundColor: "rgba(0, 0, 0, 0.1)", 
-    padding: "10px 20px",
+    padding: "10px", 
     borderRadius: "8px",
-    marginTop: "5px",
-    marginBottom: "10px",
+    margin: "5px 24px 10px 24px", 
     display: "flex",
     flexDirection: "column",
-    gap: "14px",
+    gap: "4px", 
   },
   mobileSubItem: {
     fontSize: "14px",
     fontWeight: "500",
     color: "#e5e7eb",
     cursor: "pointer",
+    padding: "10px 14px", 
+    borderRadius: "6px", 
+    transition: "background-color 0.2s",
+  },
+  mobileSubItemHover: {
+    backgroundColor: "#4F0505", 
   },
 };

@@ -1,6 +1,6 @@
 import React from 'react';
-import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 const styles = {
   container: {
@@ -8,14 +8,14 @@ const styles = {
     flexDirection: "column",
     minHeight: "100vh",
     width: "100%",
-    backgroundColor: "#f8f5f0", 
+    backgroundColor: "#f9f7f4", 
     margin: 0,
     fontFamily: "'Inter', 'Segoe UI', sans-serif",
     color: "#333333",
   },
   
   secaoDestaque: {
-    backgroundColor: "#6A3143", 
+    backgroundColor: "#8C1717", 
     color: "#ffffff",
     textAlign: "center",
     padding: "120px 20px",
@@ -69,7 +69,7 @@ const styles = {
   
   boldHighlight: {
     fontWeight: "bold",
-    color: "#6A3143",
+    color: "#8C1717",
   },
 
   quoteBox: {
@@ -82,18 +82,18 @@ const styles = {
   quoteText: {
     fontSize: "18px",
     fontStyle: "italic",
-    color: "#6A3143",
+    color: "#8C1717",
     lineHeight: "1.6",
     margin: 0,
   },
 
   actionCard: {
-    backgroundColor: "#6A3143",
+    backgroundColor: "#8C1717",
     color: "#ffffff",
     padding: "40px",
     borderRadius: "12px",
     marginTop: "20px",
-    boxShadow: "0 8px 24px rgba(106, 49, 67, 0.15)",
+    boxShadow: "0 8px 24px rgba(140, 23, 23, 0.2)",
   },
   
   actionTitle: {
@@ -107,10 +107,12 @@ const styles = {
     lineHeight: "1.6",
     color: "rgba(255, 255, 255, 0.9)",
     marginBottom: "30px",
-    margin: "0 0 30px 0",
   },
   
   actionLink: {
+    backgroundColor: "#b32d2d", 
+    padding: "12px 24px",
+    borderRadius: "6px",
     fontSize: "15px",
     fontWeight: "bold",
     color: "#ffffff",
@@ -119,6 +121,14 @@ const styles = {
     alignItems: "center",
     gap: "8px",
     cursor: "pointer",
+    transition: "background-color 0.2s",
+  },
+
+  coordenacao: {
+    fontSize: "14px",
+    color: "#666666",
+    marginTop: "25px",
+    fontFamily: "'Inter', 'Segoe UI', sans-serif",
   }
 };
 
@@ -137,7 +147,7 @@ export default function CasaCaicara() {
         
         <img 
           src="/image_402602.jpg" 
-          alt="Mãos segurando terra e muda" 
+          alt="Mangue e natureza caiçara" 
           style={styles.imagemDestaque} 
         />
 
@@ -189,6 +199,10 @@ export default function CasaCaicara() {
           <a href="#" style={styles.actionLink}>
             Participar do Inventário <span>→</span>
           </a>
+        </div>
+        
+        <div style={styles.coordenacao}>
+          Coordenação: <strong>Ana Maria Reis</strong>
         </div>
       </main>
 
