@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import '@/app/globals.css';
 import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 
@@ -78,7 +79,13 @@ export default function NavbarACAJU() {
 
       <header style={{ ...styles.navbar, justifyContent: navJustify }}>
         <Link href="/" style={styles.logoContainer}>
-          <span style={styles.logoAc}>AC</span>
+          <Image 
+            src="/logo-only.svg" 
+            alt="Logo ACAJU" 
+            width={42} 
+            height={42} 
+            priority
+          />
           <span style={styles.logoText}>ACAJU</span>
         </Link>
 
@@ -115,14 +122,14 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('casa')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/miniMuseu" style={styles.linkText}>Casa-Caiçara</Link>
+                      <Link href="/miniMuseu" style={styles.linkText}>Casa Caiçara</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'inventario-mini' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
                       onMouseEnter={() => setHoveredSubItem('inventario-mini')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/inventario" style={styles.linkText}>Inventário</Link>
+                      <Link href="/inventario" style={styles.linkText}>Acervo</Link>
                     </li>
                   </ul>
                 )}
@@ -199,9 +206,18 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('fale-conosco')}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/fale-conosco" style={styles.linkText}>
-                  <span style={styles.navItem}>Fale Conosco</span>
-                </Link>
+                <span style={styles.navItem}>Fale Conosco ˅</span>
+                {activeMenu === 'fale-conosco' && (
+                  <ul style={styles.dropdownMenu}>
+                    <li 
+                      style={hoveredSubItem === 'contato' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
+                      onMouseEnter={() => setHoveredSubItem('contato')}
+                      onMouseLeave={() => setHoveredSubItem(null)}
+                    >
+                      <Link href="/fale-conosco" style={styles.linkText}>Contato</Link>
+                    </li>
+                  </ul>
+                )}
               </li>
 
               <li 
@@ -209,7 +225,7 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('participe')}
                 onMouseLeave={handleMouseLeave}
               >
-                <span style={styles.navItem}>Participe</span>
+                <span style={styles.navItem}>Participe ˅</span>
                 {activeMenu === 'participe' && (
                   <ul style={styles.dropdownMenu}>
                     <li 
@@ -245,7 +261,12 @@ export default function NavbarACAJU() {
       {isMobile && isMobileMenuOpen && (
         <div style={styles.mobileOverlay}>
           <div style={styles.mobileHeader}>
-            <div style={styles.logoAc}>AC</div>
+            <Image 
+              src="/logo-only.svg" 
+              alt="Logo ACAJU" 
+              width={38} 
+              height={38} 
+            />
             <div 
               style={styles.closeBtn} 
               onClick={() => setIsMobileMenuOpen(false)}
@@ -270,10 +291,10 @@ export default function NavbarACAJU() {
               {openAccordion === 'mini-museu' && (
                 <div style={styles.mobileSubList}>
                   <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/miniMuseu" style={styles.linkText}>A Casa Caiçara</Link>
+                    <Link href="/miniMuseu" style={styles.linkText}>Casa Caiçara</Link>
                   </div>
                   <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/inventario" style={styles.linkText}>Inventário</Link>
+                    <Link href="/inventario" style={styles.linkText}>Acervo</Link>
                   </div>
                 </div>
               )}
@@ -313,8 +334,21 @@ export default function NavbarACAJU() {
               <Link href="/institucional" style={styles.linkText}>Institucional</Link>
             </div>
 
-            <div style={styles.mobileNavItem} onClick={() => setIsMobileMenuOpen(false)}>
-              <Link href="/fale-conosco" style={styles.linkText}>Fale Conosco</Link>
+            <div style={styles.mobileAccordionGroup}>
+              <div 
+                style={styles.mobileNavItem} 
+                onClick={() => toggleAccordion('fale-conosco')}
+              >
+                <span>Fale Conosco</span>
+                <span style={styles.accordionIcon}>{openAccordion === 'fale-conosco' ? '▲' : '▼'}</span>
+              </div>
+              {openAccordion === 'fale-conosco' && (
+                <div style={styles.mobileSubList}>
+                  <div style={styles.mobileSubItem} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/fale-conosco" style={styles.linkText}>Contato</Link>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div style={styles.mobileAccordionGroup}>
@@ -356,7 +390,7 @@ const styles = {
     fontFamily: "'Poppins', sans-serif", 
   },
   topBar: {
-    backgroundColor: "#5a1b2d",
+    backgroundColor: "#4f0505", 
     color: "#e5e7eb",
     display: "flex",
     justifyContent: "space-between",
@@ -406,7 +440,7 @@ const styles = {
     fontSize: "20px",
   },
   navbar: {
-    backgroundColor: "#70233b", 
+    backgroundColor: "#740405", 
     color: "#ffffff",
     display: "flex",
     alignItems: "center",
@@ -420,20 +454,12 @@ const styles = {
   logoContainer: {
     display: "flex",
     alignItems: "center",
-    gap: "8px",
+    gap: "12px",
     fontSize: "22px",
     fontWeight: "bold",
     cursor: "pointer",
     textDecoration: "none",
     color: "#ffffff",
-  },
-  logoAc: {
-    backgroundColor: "#ffffff",
-    color: "#70233b",
-    padding: "4px 6px",
-    borderRadius: "4px",
-    fontSize: "16px",
-    fontWeight: "bold",
   },
   logoText: {
     letterSpacing: "1px",
@@ -462,7 +488,7 @@ const styles = {
     transition: "background-color 0.2s",
   },
   navItemContainerHover: {
-    backgroundColor: "#541527",
+    backgroundColor: "#4f0505af", 
   },
   navItem: {
     fontSize: "14px",
@@ -483,7 +509,7 @@ const styles = {
     position: "absolute",
     top: "70px", 
     left: "0",
-    backgroundColor: "#541527", 
+    backgroundColor: "#4F0505", 
     minWidth: "220px",
     listStyle: "none",
     margin: 0,
@@ -502,7 +528,7 @@ const styles = {
     whiteSpace: "nowrap",
   },
   dropdownItemHover: {
-    backgroundColor: "#3a0e1a", 
+    backgroundColor: "#740405", 
   },
   mobileOverlay: {
     position: "fixed",
@@ -510,7 +536,7 @@ const styles = {
     left: 0,
     width: "100vw",
     height: "100vh",
-    backgroundColor: "#70233b", 
+    backgroundColor: "#740405", 
     zIndex: 100000, 
     display: "flex",
     flexDirection: "column",
