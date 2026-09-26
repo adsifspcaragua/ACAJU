@@ -124,7 +124,7 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('casa')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/miniMuseu" style={styles.linkText}>Casa Caiçara</Link>
+                      <Link href="/miniMuseu/casa-caicara">Casa Caiçara</Link>
                     </li>
                     <li 
                       style={hoveredSubItem === 'inventario-mini' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
@@ -305,7 +305,7 @@ export default function NavbarACAJU() {
                     onMouseEnter={() => setHoveredMobileItem('sub-casa')}
                     onMouseLeave={() => setHoveredMobileItem(null)}
                   >
-                    <Link href="/miniMuseu" style={styles.linkText}>Casa Caiçara</Link>
+                    <Link href="/miniMuseu/casa-caicara">Casa Caiçara</Link>
                   </div>
                   <div 
                     style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-acervo' ? styles.mobileSubItemHover : {}) }}
