@@ -13,7 +13,7 @@ export async function createNews({
         data: {
             title,
             content,
-            coverImage: coverImage,
+            coverImage,
             videoUrl: videoUrl || null,
             status,
             adminId,
@@ -32,26 +32,26 @@ export async function createNews({
 }
 
 export async function postMutirao({
-    title,
+    name,
     type,
     data,
-    hour,
-    place,
-    ambiente,
+    time,
+    location,
+    environment,
     coverImage,
-    content,
+    description,
     adminId
 }) {
     return await prisma.mutirao.create({
         data: {
-            title,
+            name,
             type,
             data,
-            hour,
-            place,
-            ambiente,
+            time,
+            location,
+            environment,
             coverImage,
-            content,
+            description,
             adminId
         },
     });
@@ -61,22 +61,89 @@ export async function postProjects({
     title,
     coordinator,
     objective,
-    content,
+    bodyContent,
     coverImage,
     videoUrl,
-    images = [],
     status,
-    adminId
+    adminId,
+    images = [],
 }) {
     return await prisma.Project.create({
         data: {
             title,
             coordinator,
             objective,
-            content,
-            coverImage: coverImage,
+            bodyContent,
+            coverImage,
             videoUrl: videoUrl || null,
-            
+            status,
+            adminId,
+            ...(images.length > 0 && {
+                images: {
+                    create: images.map((url) => ({
+                        url,
+                    })),
+                },
+            }),
+        },
+        include: {
+            images: true,
         },
     });
 }
+
+export async function postMemoriasCaicaras({
+    title,
+    content,
+    coverImage,
+    videoUrl,
+    adminId,
+    images = []
+}) {
+    return await prisma.Memory.create({
+        data: {
+            title,
+            content,
+            coverImage,
+            videoUrl,
+            adminId,
+            ...(images.length > 0 && {
+                images: {
+                    create: images.map((url) => ({
+                        url,
+                    })),
+                },
+            }),
+        },
+        include: {
+            images: true,
+        },
+    })
+}
+
+export async function postMiniMuseuItem({
+    description,
+    coverImage,
+    adminId
+}) {
+    return await prisma.miniMuseumItem.create({
+        description,
+        coverImage,
+        adminId
+    })
+}
+
+export async function postDocumentPost({
+    name,
+    description,
+    fileUrl,
+    adminId
+}) {
+    return await prisma.document.create({
+        name,
+        description,
+        fileUrl,
+        adminId
+    })
+}
+

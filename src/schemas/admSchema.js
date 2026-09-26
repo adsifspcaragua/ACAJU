@@ -53,7 +53,7 @@ export const createMutiraoSchema = z.object({
         .string({ required_error: 'O horário é obrigatório.' })
         .min(1, { message: 'Informe o horário do mutirão.' }),
 
-    local: z
+    location: z
         .string({ required_error: 'O local é obrigatório.' })
         .trim()
         .min(3, { message: 'Informe o local completo.' }),
@@ -67,7 +67,6 @@ export const createMutiraoSchema = z.object({
         .trim()
         .min(10, { message: 'A descrição deve ter no mínimo 10 caracteres.' }),
 
-    requiresReview: requiresReviewSchema,
 });
 
 

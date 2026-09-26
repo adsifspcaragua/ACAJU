@@ -21,6 +21,7 @@ model ADM {
   documents Document[]
   miniMuseu MiniMuseumItem[]
   projects  Project[]
+  memories  Memory[]
 }
 
 model ADMLOG {
@@ -80,7 +81,7 @@ model News {
   content    String  @db.Text
   coverImage String
   videoUrl   String?
-  status     Status  @default(PENDING)
+  status     Status  @default(APPROVED)
 
   adminId String
   ADM     ADM    @relation(fields: [adminId], references: [id])
@@ -111,7 +112,7 @@ model Mutirao {
   time        String
   location    String
   environment Environment
-  coverImage  String?
+  coverImage  String
   description String      @db.Text
   createdAt   DateTime    @default(now())
 
@@ -125,8 +126,9 @@ model Project {
   coordinator String
   objective   String   @db.Text
   bodyContent String   @db.Text
-  coverImage  String?
+  coverImage  String
   videoUrl    String?
+  status      Status   @default(APPROVED)
   createdAt   DateTime @default(now())
 
   adminId String
@@ -144,15 +146,28 @@ model ProjectImage {
   mutirao   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
-// model Memory {
-//  id            String   @id @default(uuid())
-//  title         String // Título / Figura Homenageada
-//  content       String   @db.Text
-//  coverImage    String?
-//  videoUrl      String?
-//  createdAt     DateTime @default(now())
-//  galleryImages Json?
-//} 
+model Memory {
+  id         String   @id @default(uuid())
+  title      String // Título / Figura Homenageada
+  content    String   @db.Text
+  coverImage String
+  videoUrl   String?
+  createdAt  DateTime @default(now())
+
+  adminId String
+  ADM     ADM    @relation(fields: [adminId], references: [id])
+
+  memoryImages MemoryImage[]
+}
+
+model MemoryImage {
+  id        String   @id @default(uuid())
+  url       String
+  createdAt DateTime @default(now())
+
+  memoryId String
+  memory   Memory @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+}
 
 model Document {
   id          String   @id @default(uuid())
@@ -167,12 +182,24 @@ model Document {
 
 // novas adições que terão de ser conversadas 
 
+// model MiniMuseumItem {
+//   id          String  @id @default(uuid())
+//   title       String
+//   description String? @db.Text
+//   imageUrl    String
+//   year        String?
+
+//   adminId String
+//   ADM     ADM    @relation(fields: [adminId], references: [id])
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
 model MiniMuseumItem {
   id          String  @id @default(uuid())
-  title       String
-  description String? @db.Text
-  imageUrl    String
-  year        String?
+  description String @db.Text
+  coverImage    String
 
   adminId String
   ADM     ADM    @relation(fields: [adminId], references: [id])
