@@ -8,14 +8,14 @@ const styles = {
     flexDirection: "column",
     minHeight: "100vh",
     width: "100%",
-    backgroundColor: "#f8f5f0", 
+    backgroundColor: "#f9f7f4", 
     margin: 0,
     fontFamily: "'Inter', 'Segoe UI', sans-serif",
     color: "#333333",
   },
   
   secaoDestaque: {
-    backgroundColor: "#6A3143", 
+    backgroundColor: "#8C1717", 
     color: "#ffffff",
     textAlign: "center",
     padding: "120px 20px",
@@ -50,12 +50,12 @@ const styles = {
   },
 
   definitionCard: {
-    backgroundColor: "#6A3143",
+    backgroundColor: "#8C1717",
     color: "#ffffff",
     padding: "40px",
     borderRadius: "12px",
     marginBottom: "40px",
-    boxShadow: "0 8px 24px rgba(106, 49, 67, 0.15)",
+    boxShadow: "0 8px 24px rgba(140, 23, 23, 0.2)",
   },
 
   definitionTitle: {
@@ -79,14 +79,14 @@ const styles = {
   },
 
   subtituloSecao: {
-    fontSize: "24px",
+    fontSize: "26px",
     fontWeight: "bold",
-    color: "#6A3143",
+    color: "#8C1717",
     margin: "40px 0 20px 0",
   },
 
   paragraph: {
-    fontSize: "16px",
+    fontSize: "18px",
     lineHeight: "1.8",
     margin: "0 0 25px 0",
     color: "#4A4A4A",
@@ -96,21 +96,22 @@ const styles = {
   
   boldHighlight: {
     fontWeight: "bold",
-    color: "#6A3143",
+    color: "#8C1717",
   },
 
   borderedQuote: {
-    backgroundColor: "#fcf9f5",
-    padding: "30px",
-    borderLeft: "4px solid #dcbfae",
+    backgroundColor: "#f2ebd9",
+    padding: "35px 40px",
+    borderLeft: "4px solid #8C1717",
     borderRadius: "0 8px 8px 0",
     margin: "15px 0 35px 0",
   },
   
   borderedQuoteText: {
-    fontSize: "15px",
-    color: "#4A4A4A",
-    lineHeight: "1.7",
+    fontSize: "18px",
+    fontStyle: "italic",
+    color: "#8C1717",
+    lineHeight: "1.6",
     margin: 0,
     textAlign: "justify",
   },
@@ -137,7 +138,7 @@ const styles = {
   },
 
   buttonLink: {
-    backgroundColor: "#6A3143",
+    backgroundColor: "#b32d2d",
     color: "#ffffff",
     padding: "16px 32px",
     borderRadius: "6px",
@@ -147,7 +148,7 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     alignSelf: "flex-start",
-    transition: "opacity 0.2s",
+    transition: "background-color 0.2s",
   }
 };
 
@@ -215,10 +216,10 @@ export default function MutiraoLimpeza() {
 
         <div style={styles.borderedQuote}>
           <p style={styles.borderedQuoteText}>
-            Entendemos esse dia como uma oportunidade de promover a conscientização sobre a poluição 
+            "Entendemos esse dia como uma oportunidade de promover a conscientização sobre a poluição 
             dos oceanos e a importância de remover lixos de rios e praias, e visibilizar o cotidiano da 
             população de modo a provocar governos para a implantação, garantia e ampliação de políticas 
-            públicas de salvaguardo dos ecossistemas costeiros.
+            públicas de salvaguardo dos ecossistemas costeiros."
           </p>
         </div>
 
