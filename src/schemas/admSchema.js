@@ -14,7 +14,7 @@ const youtubeUrlSchema = z
         { message: 'Insira um link válido do YouTube.' }
     );
 
-    
+
 
 export const createNewsSchema = z.object({
     title: z
@@ -112,6 +112,13 @@ export const createMemoriaSchema = z.object({
 
     videoUrl: youtubeUrlSchema
 });
+
+export const createMiniMuseuSchema = z.object({
+    content: z
+        .string({ required_error: 'O conteúdo da memória é obrigatório.' })
+        .trim()
+        .min(3, { message: 'O conteúdo da memória deve ter no mínimo 15 caracteres.' }),
+})
 
 
 
