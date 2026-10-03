@@ -5,7 +5,6 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Correção rápida para os ícones de marcador do Leaflet no Next.js
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -14,7 +13,7 @@ L.Icon.Default.mergeOptions({
 });
 
 export default function Mapa() {
-  // Coordenadas aproximadas para Porto Novo, Caraguatatuba - SP
+  
   const position = [-23.6738, -45.4285];
 
   return (
