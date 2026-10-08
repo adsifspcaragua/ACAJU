@@ -1,19 +1,28 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import GaleriaUpload from "@/components/GaleriaUpload"; 
 import CapaUpload from "@/components/CapaUpload";
-import AdminEditor from "@/components/AdminEditor";
+import FormFeedback from "@/components/FormFeedback";
 import '@/app/admin/page.admin.css';
+import { postMemoriasCaicarasAction } from '@/actions/admActions';
 
 export default function MemoriasCaicaras() {
-  const [imagemCapa, setImagemCapa] = useState(null);
+  const [state, formAction, isPending] = useActionState(postMemoriasCaicarasAction, null);
+  const [galeriaFotos, setGaleriaFotos] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const handleSubmitWithFiles = (formData) => {
+    galeriaFotos.forEach((file) => {
+      formData.append('galleryImages', file);
+    });
+    formAction(formData);
+  };
 
   return (
     <div style={styles.container}>
@@ -28,20 +37,24 @@ export default function MemoriasCaicaras() {
           </div>
         </div>
 
-        <form style={styles.card} onSubmit={(e) => e.preventDefault()}>
+        <form style={styles.card} action={handleSubmitWithFiles}>
+          <FormFeedback state={state} />
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>TÍTULO DA MEMÓRIA / FIGURA HOMENAGEADA</label>
+            <label htmlFor="memory-title" style={styles.label}>TÍTULO DA MEMÓRIA / FIGURA HOMENAGEADA</label>
             <input 
               type="text" 
+              id="memory-title"
+              name="title"
               placeholder="Ex: Histórias do Mestre Pescador..." 
               style={styles.input}
+              required
             />
           </div>
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>CONTEÚDO DA MEMÓRIA (TEXTO)</label>
-            <AdminEditor/>
+            <label htmlFor="memory-content" style={styles.label}>CONTEÚDO DA MEMÓRIA (TEXTO)</label>
+            <textarea id="memory-content" name="content" style={styles.input} required />
           </div>
 
           <div style={styles.row}>
@@ -50,11 +63,10 @@ export default function MemoriasCaicaras() {
               {isMounted ? (
                 <CapaUpload 
                   label="IMAGEM DE CAPA" 
-                  onChange={(file) => setImagemCapa(file)} 
                 />
               ) : (
                 <div style={styles.inputGroupHalf}>
-                  <label style={styles.label}>IMAGEM DE CAPA</label>
+                  <span style={styles.label}>IMAGEM DE CAPA</span>
                   <div style={styles.loadingContainer}>
                     <span style={styles.loadingText}>Carregando...</span>
                   </div>
@@ -63,9 +75,11 @@ export default function MemoriasCaicaras() {
             </div>
 
             <div style={styles.inputGroupHalf}>
-              <label style={styles.label}>VÍDEO</label>
+              <label htmlFor="memory-video" style={styles.label}>VÍDEO</label>
               <input 
                 type="text" 
+                id="memory-video"
+                name="videoUrl"
                 placeholder="insira aqui seu link do youtube" 
                 style={styles.input}
               />
@@ -75,10 +89,12 @@ export default function MemoriasCaicaras() {
           <GaleriaUpload 
             label="IMAGENS ADICIONAIS (GALERIA DA MEMÓRIA)"
             titulo="CLIQUE PARA SELECIONAR FOTOS ADICIONAIS"
-            destinationUrl="https://meu-servidor.com/upload"
+            onChange={setGaleriaFotos}
           />
 
-          <button type="submit" className="admin-submit-btn">Publicar</button>
+          <button type="submit" className="admin-submit-btn" disabled={isPending}>
+            {isPending ? "Publicando..." : "Publicar"}
+          </button>
 
         </form>
       </main>

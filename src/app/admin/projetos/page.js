@@ -1,20 +1,29 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import GaleriaUpload from "@/components/GaleriaUpload"; 
 import CapaUpload from "@/components/CapaUpload";
-import AdminEditor from "@/components/AdminEditor";
+import FormFeedback from "@/components/FormFeedback";
 import '@/app/admin/page.admin.css';
+import { postProjectAction } from '@/actions/admActions';
 
 export default function GerenciarProjetos() {
+  const [state, formAction, isPending] = useActionState(postProjectAction, null);
   const [solicitarAnalise, setSolicitarAnalise] = useState(false);
-  const [imagemCapa, setImagemCapa] = useState(null);
+  const [galeriaFotos, setGaleriaFotos] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const handleSubmitWithFiles = (formData) => {
+    galeriaFotos.forEach((file) => {
+      formData.append('galleryImages', file);
+    });
+    formAction(formData);
+  };
 
   return (
     <div style={styles.container}>
@@ -28,37 +37,47 @@ export default function GerenciarProjetos() {
           </div>
         </div>
 
-        <form style={styles.card} onSubmit={(e) => e.preventDefault()}>
+        <form style={styles.card} action={handleSubmitWithFiles}>
+          <FormFeedback state={state} />
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>TÍTULO DO PROJETO</label>
+            <label htmlFor="project-title" style={styles.label}>TÍTULO DO PROJETO</label>
             <input 
               type="text" 
+              id="project-title"
+              name="title"
               placeholder="Ex: Preservação do Rio Juqueriquerê" 
               style={styles.input}
+              required
             />
           </div>
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>COORDENADOR</label>
+            <label htmlFor="project-coordinator" style={styles.label}>COORDENADOR</label>
             <input 
               type="text" 
+              id="project-coordinator"
+              name="coordinator"
               placeholder="Nome do coordenador" 
               style={styles.input}
+              required
             />
           </div>
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>OBJETIVO</label>
+            <label htmlFor="project-objective" style={styles.label}>OBJETIVO</label>
             <textarea 
+              id="project-objective"
+              name="objective"
               placeholder="Descreva de forma breve o objetivo..." 
               style={{...styles.textarea, height: "80px"}} 
+              required
             />
           </div>
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>CORPO DO PROJETO (TEXTO DETALHADO)</label>
-            <AdminEditor/>
+            <label htmlFor="project-content" style={styles.label}>CORPO DO PROJETO (TEXTO DETALHADO)</label>
+            <textarea id="project-content" name="content" style={styles.textarea} required />
           </div>
 
           <div style={styles.row}>
@@ -67,11 +86,10 @@ export default function GerenciarProjetos() {
               {isMounted ? (
                 <CapaUpload 
                   label="IMAGEM DE CAPA" 
-                  onChange={(file) => setImagemCapa(file)} 
                 />
               ) : (
                 <div style={styles.inputGroupHalf}>
-                  <label style={styles.label}>IMAGEM DE CAPA</label>
+                  <span style={styles.label}>IMAGEM DE CAPA</span>
                   <div style={styles.loadingContainer}>
                     <span style={styles.loadingText}>Carregando...</span>
                   </div>
@@ -80,9 +98,11 @@ export default function GerenciarProjetos() {
             </div>
 
             <div style={styles.inputGroupHalf}>
-              <label style={styles.label}>VÍDEO</label>
+              <label htmlFor="project-video" style={styles.label}>VÍDEO</label>
               <input 
                 type="text" 
+                id="project-video"
+                name="videoUrl"
                 placeholder="insira aqui seu link do youtube" 
                 style={styles.input}
               />
@@ -92,11 +112,15 @@ export default function GerenciarProjetos() {
           <GaleriaUpload 
             label="FOTOS DO PROJETO"
             titulo="CLIQUE PARA SELECIONAR FOTOS DO PROJETO"
-            destinationUrl="https://meu-servidor.com/upload"
+            onChange={setGaleriaFotos}
           />
 
           <div style={styles.switchContainer}>
-            <div 
+            <button
+              type="button"
+              role="switch"
+              aria-checked={solicitarAnalise}
+              aria-label="Solicitar análise para aprovação"
               onClick={() => setSolicitarAnalise(!solicitarAnalise)}
               style={{
                 ...styles.switchTrack,
@@ -107,11 +131,18 @@ export default function GerenciarProjetos() {
                 ...styles.switchThumb,
                 transform: solicitarAnalise ? "translateX(20px)" : "translateX(0px)"
               }} />
-            </div>
+            </button>
             <span style={styles.switchLabel}>Solicitar análise para aprovação</span>
           </div>
+          <input
+            type="hidden"
+            name="requiresReview"
+            value={solicitarAnalise ? "on" : "off"}
+          />
 
-          <button type="submit" className="admin-submit-btn">Publicar</button>
+          <button type="submit" className="admin-submit-btn" disabled={isPending}>
+            {isPending ? "Publicando..." : "Publicar"}
+          </button>
 
         </form>
       </main>
@@ -257,6 +288,7 @@ const styles = {
     height: "24px",
     borderRadius: "12px",
     padding: "2px",
+    border: "none",
     cursor: "pointer",
     transition: "background-color 0.2s",
     display: "flex",

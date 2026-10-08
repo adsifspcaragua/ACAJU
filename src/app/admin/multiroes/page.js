@@ -1,13 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import '@/app/admin/page.admin.css';
-import AdminEditor from "@/components/AdminEditor";
 import CapaUpload from "@/components/CapaUpload";
+import FormFeedback from "@/components/FormFeedback";
+
+import { useActionState } from 'react';
+import { postMutiraoAction } from '@/actions/admActions';
 
 export default function GerenciarMultiroes() {
-  const [imagemCapa, setImagemCapa] = useState(null);
+  const [state, formAction, isPending] = useActionState(postMutiraoAction, null);
+
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -27,21 +31,25 @@ export default function GerenciarMultiroes() {
           </div>
         </div>
 
-        <form style={styles.card} onSubmit={(e) => e.preventDefault()}>
-          
+        <form style={styles.card} action={formAction}>
+          <FormFeedback state={state} />
+
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>NOME DO MUTIRÃO</label>
-            <input 
-              type="text" 
-              placeholder="Ex: Limpeza da Foz do Rio Juqueriquerê 2026" 
+            <label htmlFor="mutirao-name" style={styles.label}>NOME DO MUTIRÃO</label>
+            <input
+              type="text"
+              id="mutirao-name"
+              name="name"
+              placeholder="Ex: Limpeza da Foz do Rio Juqueriquerê 2026"
               style={styles.input}
+              required
             />
           </div>
 
           <div style={styles.row}>
             <div style={styles.inputGroupHalf}>
-              <label style={styles.label}>TIPO DE MUTIRÃO</label>
-              <select style={styles.select} name="type">
+              <label htmlFor="mutirao-type" style={styles.label}>TIPO DE MUTIRÃO</label>
+              <select id="mutirao-type" style={styles.select} name="type" required>
                 <option value="">Selecione uma opção...</option>
                 <option value="limpeza">Limpeza</option>
                 <option value="plantio">Plantio</option>
@@ -50,34 +58,40 @@ export default function GerenciarMultiroes() {
             </div>
 
             <div style={styles.inputGroupHalf}>
-              <label style={styles.label}>DATA</label>
-              <input type="date" style={styles.input} />
+              <label htmlFor="mutirao-date" style={styles.label}>DATA</label>
+              <input id="mutirao-date" type="date" name="date" style={styles.input} required />
             </div>
           </div>
 
           <div style={styles.row}>
             <div style={styles.inputGroupHalf}>
-              <label style={styles.label}>HORÁRIO</label>
-              <input 
-                type="time" 
-                defaultValue="07:00" 
-                style={styles.input} 
+              <label htmlFor="mutirao-time" style={styles.label}>HORÁRIO</label>
+              <input
+                id="mutirao-time"
+                type="time"
+                name="time"
+                defaultValue="07:00"
+                style={styles.input}
+                required
               />
             </div>
 
             <div style={styles.inputGroupHalf}>
-              <label style={styles.label}>LOCAL</label>
-              <input 
-                type="text" 
-                placeholder="Ex: Praia das Palmeiras ou Sede..." 
+              <label htmlFor="mutirao-location" style={styles.label}>LOCAL</label>
+              <input
+                id="mutirao-location"
+                type="text"
+                name="location"
+                placeholder="Ex: Praia das Palmeiras ou Sede..."
                 style={styles.input}
+                required
               />
             </div>
           </div>
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>AMBIENTE DO LOCAL</label>
-            <select style={styles.select}>
+            <label htmlFor="mutirao-environment" style={styles.label}>AMBIENTE DO LOCAL</label>
+            <select id="mutirao-environment" style={styles.select} name="environment" required>
               <option value="">Selecione uma opção...</option>
               <option value="praia">Praia</option>
               <option value="rio">Rio</option>
@@ -89,13 +103,12 @@ export default function GerenciarMultiroes() {
 
           <div style={styles.inputGroupFull}>
             {isMounted ? (
-              <CapaUpload 
-                label="IMAGEM DE CAPA DO MUTIRÃO" 
-                onChange={(file) => setImagemCapa(file)} 
+              <CapaUpload
+                label="IMAGEM DE CAPA DO MUTIRÃO"
               />
             ) : (
               <div style={styles.inputGroupFull}>
-                <label style={styles.label}>IMAGEM DE CAPA DO MUTIRÃO</label>
+                <span style={styles.label}>IMAGEM DE CAPA DO MUTIRÃO</span>
                 <div style={styles.loadingContainer}>
                   <span style={styles.loadingText}>Carregando...</span>
                 </div>
@@ -104,11 +117,13 @@ export default function GerenciarMultiroes() {
           </div>
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>DESCRIÇÃO CURTA</label>
-            <AdminEditor/>
+            <label htmlFor="mutirao-description" style={styles.label}>DESCRIÇÃO CURTA</label>
+            <textarea id="mutirao-description" name="description" style={styles.input} required />
           </div>
 
-          <button type="submit" className="admin-submit-btn">Publicar</button>
+          <button type="submit" className="admin-submit-btn" disabled={isPending}>
+            {isPending ? "Publicando..." : "Publicar"}
+          </button>
 
         </form>
       </main>
@@ -121,13 +136,13 @@ const styles = {
     display: "flex",
     height: "100vh",
     width: "100vw",
-    overflow: "hidden", 
+    overflow: "hidden",
     margin: 0,
-    backgroundColor: "transparent", 
+    backgroundColor: "transparent",
   },
   mainContent: {
     flexGrow: 1,
-    overflowY: "auto", 
+    overflowY: "auto",
     padding: "50px",
     boxSizing: "border-box",
     display: "flex",

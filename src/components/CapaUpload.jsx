@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function CapaUpload({
   label = "IMAGEM DE CAPA",
@@ -31,7 +31,7 @@ export default function CapaUpload({
 
   const handleRemove = (e) => {
     e.stopPropagation();
-    if (selectedImage?.previewUrl && selectedImage.previewUrl.startsWith('blob:')) {
+    if (selectedImage?.previewUrl?.startsWith('blob:')) {
       URL.revokeObjectURL(selectedImage.previewUrl);
     }
     setSelectedImage(null);
@@ -48,12 +48,13 @@ export default function CapaUpload({
 
   return (
     <div style={styles.container}>
-      {label && <label style={styles.label}>{label}</label>}
+      {label && <label htmlFor={name} style={styles.label}>{label}</label>}
 
       {/* 2. O input agora fica SEMPRE presente no formulário, invisível */}
       <input
         ref={fileInputRef}
         type="file"
+        id={name}
         name={name}
         accept="image/*"
         onChange={handleFileChange}
@@ -80,13 +81,14 @@ export default function CapaUpload({
           </div>
         ) : (
           /* Ao clicar nesta área, aciona o input escondido */
-          <div
+          <button
+            type="button"
             style={styles.uploadArea}
             onClick={() => fileInputRef.current?.click()}
           >
             <span style={styles.uploadButton}>Escolher arquivo</span>
             <span style={styles.uploadText}>Nenhum arquivo escolhido</span>
-          </div>
+          </button>
         )}
       </div>
     </div>
@@ -127,6 +129,10 @@ const styles = {
     gap: "14px",
     width: "100%",
     cursor: "pointer",
+    border: "none",
+    padding: 0,
+    backgroundColor: "transparent",
+    textAlign: "left",
   },
   uploadButton: {
     backgroundColor: "#f3f4f6",

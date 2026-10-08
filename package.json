@@ -14,7 +14,7 @@
     "@lexical/react": "^0.49.0",
     "@lexical/rich-text": "^0.49.0",
     "@lexical/utils": "^0.49.0",
-    "@prisma/adapter-mariadb": "^7.9.1",
+    "@prisma/adapter-mariadb": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "@rpldy/upload-button": "^1.13.0",
     "@rpldy/upload-drop-zone": "^1.13.0",

@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
-import AdminEditor from "@/components/AdminEditor";
 import GaleriaUpload from "@/components/GaleriaUpload";
 import CapaUpload from "@/components/CapaUpload";
+import FormFeedback from "@/components/FormFeedback";
 import '@/app/admin/page.admin.css';
 
 import { useActionState } from 'react';
@@ -44,16 +44,11 @@ export default function PublicarNoticia() {
 
         <form style={styles.card} action={handleSubmitWithFiles}>
 
-          {/* Feedback de erro retornado pela Action */}
-          {state?.error && (
-            <div style={styles.errorAlert}>
-              {state.error}
-            </div>
-          )}
+          <FormFeedback state={state} />
 
           {/* TÍTULO */}
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>TÍTULO DA NOTÍCIA</label>
+            <label htmlFor="title" style={styles.label}>TÍTULO DA NOTÍCIA</label>
             <input
               type="text"
               id="title"
@@ -62,16 +57,13 @@ export default function PublicarNoticia() {
               style={styles.input}
               required
             />
-            {state?.errors?.title && (
-              <span style={styles.errorText}>{state.errors.title}</span>
-            )}
           </div>
 
           {/* CONTEÚDO PRINCIPAL */}
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>CONTEÚDO PRINCIPAL</label>
-            {/* <AdminEditor onChange={(html) => setEditorContent(html)} /> */}
+            <label htmlFor="content-input" style={styles.label}>CONTEÚDO PRINCIPAL</label>
             <textarea
+              id="content-input"
               placeholder="Escreva o seu conteudo aqui..."
               onChange={(e) => setEditorContent(e.target.value)}
               style={{
@@ -87,11 +79,7 @@ export default function PublicarNoticia() {
               value={editorContent}
               type="hidden"
               name="content"
-              id="content"
             />
-            {state?.errors?.content && (
-              <span style={styles.errorText}>{state.errors.content}</span>
-            )}
           </div>
 
           {/* ROW: CAPA E VÍDEO */}
@@ -113,7 +101,7 @@ export default function PublicarNoticia() {
             </div>
 
             <div style={styles.inputGroupHalf}>
-              <label style={styles.label}>VÍDEO</label>
+              <label htmlFor="videoUrl" style={styles.label}>VÍDEO</label>
               <input
                 type="text"
                 name="videoUrl"
@@ -133,7 +121,11 @@ export default function PublicarNoticia() {
 
           {/* SWITCH DE STATUS */}
           <div style={styles.switchContainer}>
-            <div
+            <button
+              type="button"
+              role="switch"
+              aria-checked={solicitarAnalise}
+              aria-label="Solicitar análise para aprovação"
               onClick={() => setSolicitarAnalise(!solicitarAnalise)}
               style={{
                 ...styles.switchTrack,
@@ -144,7 +136,7 @@ export default function PublicarNoticia() {
                 ...styles.switchThumb,
                 transform: solicitarAnalise ? "translateX(20px)" : "translateX(0px)"
               }} />
-            </div>
+            </button>
 
             {/* Input oculto para o FormData registrar o estado da alternância */}
             <input

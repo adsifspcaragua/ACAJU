@@ -22,6 +22,8 @@ model ADM {
   miniMuseu MiniMuseumItem[]
   projects  Project[]
   memories  Memory[]
+
+  @@map("adm")
 }
 
 model ADMLOG {
@@ -33,6 +35,8 @@ model ADMLOG {
 
   adminId String
   ADM     ADM    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@map("admlog")
 }
 
 enum Status {
@@ -71,6 +75,8 @@ model OperatingHours {
   closingTime     String
   additionalNotes String?     @db.Text
   updatedAt       DateTime    @updatedAt
+
+  @@map("operatinghours")
 }
 
 // PUBLICAÇÕES 
@@ -90,6 +96,8 @@ model News {
   updatedAt DateTime @updatedAt
 
   images NewsImage[]
+
+  @@map("news")
 }
 
 // mini tabela para salvar url de image linha por linha
@@ -100,6 +108,8 @@ model NewsImage {
 
   newsId String
   news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@map("newsimage")
 }
 
 // MULTIRÔES
@@ -118,6 +128,8 @@ model Mutirao {
 
   adminId String
   ADM     ADM    @relation(fields: [adminId], references: [id])
+
+  @@map("mutirao")
 }
 
 model Project {
@@ -135,6 +147,8 @@ model Project {
   ADM     ADM    @relation(fields: [adminId], references: [id])
 
   images ProjectImage[]
+
+  @@map("project")
 }
 
 model ProjectImage {
@@ -144,6 +158,8 @@ model ProjectImage {
 
   projectId String
   mutirao   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("projectimage")
 }
 
 model Memory {
@@ -158,6 +174,8 @@ model Memory {
   ADM     ADM    @relation(fields: [adminId], references: [id])
 
   memoryImages MemoryImage[]
+
+  @@map("memory")
 }
 
 model MemoryImage {
@@ -167,6 +185,8 @@ model MemoryImage {
 
   memoryId String
   memory   Memory @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+
+  @@map("memoryimage")
 }
 
 model Document {
@@ -178,6 +198,8 @@ model Document {
 
   adminId String
   ADM     ADM    @relation(fields: [adminId], references: [id])
+
+  @@map("document")
 }
 
 // novas adições que terão de ser conversadas 
@@ -197,13 +219,17 @@ model Document {
 // }
 
 model MiniMuseumItem {
-  id          String  @id @default(uuid())
-  description String @db.Text
-  coverImage    String
+  id          String   @id @default(uuid())
+  title       String
+  description String?  @db.Text
+  imageUrl    String
+  year        String?
 
   adminId String
   ADM     ADM    @relation(fields: [adminId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("minimuseumitem")
 }

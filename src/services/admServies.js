@@ -34,7 +34,7 @@ export async function createNews({
 export async function postMutirao({
     name,
     type,
-    data,
+    date,
     time,
     location,
     environment,
@@ -46,7 +46,7 @@ export async function postMutirao({
         data: {
             name,
             type,
-            data,
+            date,
             time,
             location,
             environment,
@@ -68,7 +68,7 @@ export async function postProjects({
     adminId,
     images = [],
 }) {
-    return await prisma.Project.create({
+    return await prisma.project.create({
         data: {
             title,
             coordinator,
@@ -100,7 +100,7 @@ export async function postMemoriasCaicaras({
     adminId,
     images = []
 }) {
-    return await prisma.Memory.create({
+    return await prisma.memory.create({
         data: {
             title,
             content,
@@ -108,7 +108,7 @@ export async function postMemoriasCaicaras({
             videoUrl,
             adminId,
             ...(images.length > 0 && {
-                images: {
+                memoryImages: {
                     create: images.map((url) => ({
                         url,
                     })),
@@ -116,21 +116,25 @@ export async function postMemoriasCaicaras({
             }),
         },
         include: {
-            images: true,
+            memoryImages: true,
         },
     })
 }
 
 export async function postMiniMuseuItem({
+    title,
     description,
-    coverImage,
+    imageUrl,
     adminId
 }) {
     return await prisma.miniMuseumItem.create({
-        description,
-        coverImage,
-        adminId
-    })
+        data: {
+            title,
+            description,
+            imageUrl,
+            adminId,
+        },
+    });
 }
 
 export async function postDocumentPost({
@@ -140,10 +144,12 @@ export async function postDocumentPost({
     adminId
 }) {
     return await prisma.document.create({
-        name,
-        description,
-        fileUrl,
-        adminId
-    })
+        data: {
+            name,
+            description,
+            fileUrl,
+            adminId,
+        },
+    });
 }
 

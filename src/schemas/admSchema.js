@@ -114,11 +114,16 @@ export const createMemoriaSchema = z.object({
 });
 
 export const createMiniMuseuSchema = z.object({
-    content: z
-        .string({ required_error: 'O conteúdo da memória é obrigatório.' })
+    title: z
+        .string({ required_error: 'O título do item é obrigatório.' })
         .trim()
-        .min(3, { message: 'O conteúdo da memória deve ter no mínimo 15 caracteres.' }),
-})
+        .min(3, { message: 'O título deve ter no mínimo 3 caracteres.' }),
+
+    description: z
+        .string()
+        .trim()
+        .optional(),
+});
 
 
 

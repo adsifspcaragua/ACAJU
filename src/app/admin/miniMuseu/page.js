@@ -1,12 +1,15 @@
 "use client";
 
-import React from "react";
+import { useActionState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import '@/app/admin/page.admin.css';
-import AdminEditor from "@/components/AdminEditor";
-import GaleriaUpload from "@/components/GaleriaUpload"; 
+import CapaUpload from "@/components/CapaUpload";
+import FormFeedback from "@/components/FormFeedback";
+import { postMiniMuseuItemAction } from '@/actions/admActions';
 
 export default function MiniMuseu() {
+  const [state, formAction, isPending] = useActionState(postMiniMuseuItemAction, null);
+
   return (
     <div style={styles.container}>
       <SideBarAdmin />
@@ -20,22 +23,26 @@ export default function MiniMuseu() {
           </div>
         </div>
 
-        <div style={styles.card}>
-          
-          <GaleriaUpload 
-            label="ARQUIVOS"
-            titulo="CLIQUE PARA SELECIONAR FOTOS"
-            destinationUrl="https://meu-servidor.com/upload"
-          />
+        <form style={styles.card} action={formAction}>
+          <FormFeedback state={state} />
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>DESCRIÇÃO</label>
-            <AdminEditor />
+            <label htmlFor="museum-title" style={styles.label}>TÍTULO DO ITEM</label>
+            <input id="museum-title" name="title" style={styles.input} required />
           </div>
 
-          <button type="submit" className="admin-submit-btn">Publicar</button>
+          <CapaUpload label="IMAGEM DO ITEM" />
 
-        </div>
+          <div style={styles.inputGroupFull}>
+            <label htmlFor="museum-description" style={styles.label}>DESCRIÇÃO</label>
+            <textarea id="museum-description" name="description" style={styles.textarea} />
+          </div>
+
+          <button type="submit" className="admin-submit-btn" disabled={isPending}>
+            {isPending ? "Publicando..." : "Publicar"}
+          </button>
+
+        </form>
       </main>
     </div>
   );
@@ -115,6 +122,17 @@ const styles = {
     fontWeight: "bold",
     letterSpacing: "0.5px",
     textTransform: "uppercase",
+  },
+  textarea: {
+    width: "100%",
+    minHeight: "180px",
+    padding: "14px",
+    border: "1px solid #d1d5db",
+    borderRadius: "8px",
+    fontSize: "15px",
+    color: "#374151",
+    boxSizing: "border-box",
+    fontFamily: "inherit",
   },
   submitButton: {
     backgroundColor: "#085747",

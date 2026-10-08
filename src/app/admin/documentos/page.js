@@ -1,29 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useActionState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import '@/app/admin/page.admin.css';
-import AdminEditor from "@/components/AdminEditor";
+import { postDocumentAction } from '@/actions/admActions';
+import FormFeedback from '@/components/FormFeedback';
 
 export default function RepositorioDocumentos() {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-    }
-  };
-
-  const handleRemoveFile = (e) => {
-    e.stopPropagation();
-    setSelectedFile(null);
-  };
+  const [state, formAction, isPending] = useActionState(postDocumentAction, null);
 
   return (
     <div style={styles.container}>
@@ -38,57 +22,41 @@ export default function RepositorioDocumentos() {
           </div>
         </div>
 
-        <form style={styles.card} onSubmit={(e) => e.preventDefault()}>
+        <form style={styles.card} action={formAction}>
+          <FormFeedback state={state} />
           
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>NOME DO DOCUMENTO</label>
+            <label htmlFor="document-title" style={styles.label}>NOME DO DOCUMENTO</label>
             <input 
               type="text" 
+              id="document-title"
+              name="title"
               placeholder="Ex: Estatuto da Associação 2026" 
               style={styles.input}
+              required
             />
           </div>
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>DESCRIÇÃO DO DOCUMENTO</label>
-            <AdminEditor/>
+            <label htmlFor="document-description" style={styles.label}>DESCRIÇÃO DO DOCUMENTO</label>
+            <textarea id="document-description" name="description" style={styles.description} required />
           </div>
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>FICHEIRO (PDF)</label>
-            <div style={styles.uploadBox}>
-              {isMounted ? (
-                selectedFile ? (
-                  <div style={styles.previewContainer}>
-                    <span style={styles.fileName}>{selectedFile.name}</span>
-                    <button 
-                      type="button" 
-                      onClick={handleRemoveFile} 
-                      style={styles.removeButton}
-                      title="Remover arquivo"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ) : (
-                  <label style={styles.uploadArea}>
-                    <input 
-                      type="file" 
-                      accept=".pdf,application/pdf" 
-                      onChange={handleFileChange} 
-                      style={{ display: "none" }} 
-                    />
-                    <span style={styles.uploadButton}>Escolher arquivo</span>
-                    <span style={styles.uploadText}>Nenhum arquivo escolhido</span>
-                  </label>
-                )
-              ) : (
-                <span style={styles.uploadText}>Carregando...</span>
-              )}
-            </div>
+            <label htmlFor="document-file" style={styles.label}>FICHEIRO (PDF)</label>
+            <input
+              type="file"
+              id="document-file"
+              name="file"
+              accept=".pdf,application/pdf"
+              style={styles.input}
+              required
+            />
           </div>
 
-          <button type="submit" className="admin-submit-btn">Publicar</button>
+          <button type="submit" className="admin-submit-btn" disabled={isPending}>
+            {isPending ? "Publicando..." : "Publicar"}
+          </button>
 
         </form>
       </main>
@@ -181,6 +149,17 @@ const styles = {
     color: "#374151",
     boxSizing: "border-box",
     outline: "none",
+    fontFamily: "inherit",
+  },
+  description: {
+    width: "100%",
+    minHeight: "180px",
+    padding: "14px",
+    border: "1px solid #d1d5db",
+    borderRadius: "8px",
+    fontSize: "15px",
+    color: "#374151",
+    boxSizing: "border-box",
     fontFamily: "inherit",
   },
   uploadBox: {
