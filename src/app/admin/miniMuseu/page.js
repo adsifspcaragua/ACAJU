@@ -123,6 +123,18 @@ const styles = {
     letterSpacing: "0.5px",
     textTransform: "uppercase",
   },
+  input: {
+    width: "100%",
+    height: "52px",
+    padding: "14px",
+    border: "1px solid #d1d5db",
+    borderRadius: "8px",
+    fontSize: "15px",
+    color: "#374151",
+    boxSizing: "border-box",
+    outline: "none",
+    fontFamily: "inherit",
+  },
   textarea: {
     width: "100%",
     minHeight: "180px",

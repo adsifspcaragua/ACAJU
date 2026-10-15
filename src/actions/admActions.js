@@ -1,6 +1,7 @@
 'use server';
-import { createNews, postMutirao, postProjects, postMemoriasCaicaras, postMiniMuseuItem, postDocumentPost } from '@/./services/admServies';
+import { createNews, deleteAdminPublication, getAdminPendingPublications, getAdminPublications, getOperatingHours, postMutirao, postProjects, postMemoriasCaicaras, postMiniMuseuItem, postDocumentPost, reviewAdminPublication, saveOperatingHours, updateAdminPublication } from '@/./services/admServies';
 import { createNewsSchema, createMutiraoSchema, createProjetoSchema, createMemoriaSchema, createMiniMuseuSchema, createDocumentoSchema } from '@/schemas/admSchema';
+import { operatingHoursSchema, updatePublicationSchemas } from '@/schemas/admSchema';
 import { decrypt } from '../lib/session'
 import { saveFileLocally } from '@/lib/upload';
 import { logAdminAction } from '@/lib/logger';
@@ -21,6 +22,18 @@ function validationFailure(validation) {
     };
 }
 
+function hasUploadedFile(file) {
+    return file && typeof file !== 'string' && file.size > 0 && typeof file.arrayBuffer === 'function';
+}
+
+function isImageFile(file) {
+    return file.type.startsWith('image/') || /\.(png|jpe?g|webp|gif|avif)$/i.test(file.name);
+}
+
+function isPdfFile(file) {
+    return file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+}
+
 function databaseFailure(error, itemName) {
     if (error?.code === 'P2021') {
         const table = error.meta?.table;
@@ -38,6 +51,237 @@ function databaseFailure(error, itemName) {
 
     const code = error?.code ? ` (código ${error.code})` : '';
     return `Não foi possível salvar ${itemName}. Verifique os dados e a conexão com o banco${code}.`;
+}
+
+export async function getAdminPublicationsAction() {
+    const currentAdminId = await getCurrentAdminId();
+    if (!currentAdminId) {
+        return { publications: [], warnings: [], error: 'Sua sessão expirou. Entre novamente para consultar as publicações.' };
+    }
+
+    try {
+        return { ...(await getAdminPublications()), error: null };
+    } catch (error) {
+        console.error('Erro ao carregar publicações:', error);
+        return {
+            publications: [],
+            warnings: [],
+            error: `Não foi possível carregar as publicações do banco de dados${error?.code ? ` (código ${error.code})` : ''}.`,
+        };
+    }
+}
+
+export async function getAdminPendingPublicationsAction() {
+    const currentAdminId = await getCurrentAdminId();
+    if (!currentAdminId) {
+        return { publications: [], error: 'Sua sessão expirou. Entre novamente para consultar as pendências.' };
+    }
+
+    try {
+        return { publications: await getAdminPendingPublications(), error: null };
+    } catch (error) {
+        console.error('Erro ao carregar pendências:', error);
+        return { publications: [], error: databaseFailure(error, 'as pendências') };
+    }
+}
+
+export async function reviewAdminPublicationAction(_prevState, formData) {
+    const currentAdminId = await getCurrentAdminId();
+    if (!currentAdminId) {
+        return { error: 'Sua sessão expirou. Entre novamente para analisar a publicação.' };
+    }
+
+    const id = formData.get('id');
+    const category = formData.get('category');
+    const decision = formData.get('decision');
+    const reason = String(formData.get('reason') ?? '').trim();
+
+    if (typeof id !== 'string' || !id || !['Notícia', 'Projeto'].includes(category) || !['APPROVED', 'REJECTED'].includes(decision)) {
+        return { error: 'Não foi possível identificar a publicação ou a decisão.' };
+    }
+    if (decision === 'REJECTED' && reason.length < 5) {
+        return { error: 'Informe uma justificativa de pelo menos 5 caracteres para rejeitar.' };
+    }
+
+    try {
+        await reviewAdminPublication({ id, category, decision });
+        const action = decision === 'APPROVED' ? 'APROVOU' : `REJEITOU: ${reason}`;
+        await logAdminAction(currentAdminId, `${action} ${category} ${id}`.slice(0, 191));
+        revalidatePath('/admin/pendencias');
+        revalidatePath('/admin/gerenciarPublicacoes');
+        return { success: true, id: `${category}-${id}` };
+    } catch (error) {
+        console.error('Erro ao analisar publicação:', error);
+        return { error: databaseFailure(error, 'a publicação') };
+    }
+}
+
+export async function updateAdminPublicationAction(_prevState, formData) {
+    const currentAdminId = await getCurrentAdminId();
+    if (!currentAdminId) {
+        return { error: 'Sua sessão expirou. Entre novamente para editar a publicação.' };
+    }
+
+    const id = formData.get('id');
+    const category = formData.get('category');
+    const schema = updatePublicationSchemas[category];
+    if (typeof id !== 'string' || !id || !schema) {
+        return { error: 'Não foi possível identificar a publicação ou seus campos.' };
+    }
+
+    const rawFields = Object.fromEntries(formData.entries());
+    const validation = schema.safeParse(rawFields);
+    if (!validation.success) {
+        return {
+            errors: validation.error.flatten().fieldErrors,
+            message: 'Confira o título e o conteúdo da publicação.',
+        };
+    }
+
+    try {
+        const media = {};
+        const coverFile = formData.get('coverImage');
+        const coverFolders = {
+            'Notícia': 'newsCover',
+            'Mutirão': 'mutiraoCover',
+            'Projeto': 'projectsCover',
+            'Memória Caiçara': 'memoriasCover',
+            'Mini-Museu': 'MiniMuseuImages',
+        };
+
+        if (hasUploadedFile(coverFile)) {
+            if (!isImageFile(coverFile)) {
+                return { error: 'A capa precisa ser um arquivo de imagem (PNG, JPEG, WebP, GIF ou AVIF).' };
+            }
+
+            const coverPath = await saveFileLocally(coverFile, coverFolders[category]);
+            if (category === 'Mini-Museu') media.imageUrl = coverPath;
+            else media.coverImage = coverPath;
+        }
+
+        const galleryFiles = formData.getAll('galleryImages').filter(hasUploadedFile);
+        if (galleryFiles.length > 0) {
+            if (!galleryFiles.every(isImageFile)) {
+                return { error: 'A galeria aceita somente arquivos de imagem.' };
+            }
+
+            const galleryFolders = {
+                'Notícia': 'newsImage',
+                'Projeto': 'projectsImages',
+                'Memória Caiçara': 'memoriasImages',
+            };
+            if (!galleryFolders[category]) {
+                return { error: 'Esta categoria não possui galeria de imagens.' };
+            }
+            media.galleryImages = await Promise.all(
+                galleryFiles.map((file) => saveFileLocally(file, galleryFolders[category])),
+            );
+        }
+
+        const documentFile = formData.get('file');
+        if (hasUploadedFile(documentFile)) {
+            if (category !== 'Documentos') {
+                return { error: 'O arquivo PDF só pode ser alterado na categoria Documentos.' };
+            }
+            if (!isPdfFile(documentFile)) {
+                return { error: 'O novo arquivo precisa estar no formato PDF.' };
+            }
+            media.fileUrl = await saveFileLocally(documentFile, 'documents');
+        }
+
+        const updated = await updateAdminPublication({ id, category, fields: validation.data, media });
+        await logAdminAction(currentAdminId, `EDITOU ${category} ${id}`.slice(0, 191));
+        revalidatePath('/admin/gerenciarPublicacoes');
+        const updatedTitle = validation.data.title ?? validation.data.name;
+        return {
+            success: true,
+            message: 'Publicação atualizada.',
+            publication: {
+                id: `${category}-${updated.id}`,
+                title: updatedTitle,
+                fields: validation.data,
+                content: validation.data.content ?? validation.data.bodyContent ?? validation.data.description ?? '',
+                media,
+            },
+        };
+    } catch (error) {
+        console.error('Erro ao editar publicação:', error);
+        return { error: databaseFailure(error, 'a publicação') };
+    }
+}
+
+export async function deleteAdminPublicationAction(category, id) {
+    const currentAdminId = await getCurrentAdminId();
+    if (!currentAdminId) {
+        return { success: false, error: 'Sua sessão expirou. Entre novamente para excluir a publicação.' };
+    }
+    if (!['Notícia', 'Mutirão', 'Projeto', 'Memória Caiçara', 'Mini-Museu', 'Documentos'].includes(category) || typeof id !== 'string' || !id) {
+        return { success: false, error: 'Não foi possível identificar a publicação.' };
+    }
+
+    try {
+        await deleteAdminPublication({ category, id });
+        await logAdminAction(currentAdminId, `EXCLUIU ${category} ${id}`.slice(0, 191));
+        revalidatePath('/admin/gerenciarPublicacoes');
+        return { success: true };
+    } catch (error) {
+        console.error('Erro ao excluir publicação:', error);
+        return { success: false, error: databaseFailure(error, 'a publicação') };
+    }
+}
+
+export async function getOperatingHoursAction() {
+    const currentAdminId = await getCurrentAdminId();
+    if (!currentAdminId) {
+        return { hours: null, error: 'Sua sessão expirou. Entre novamente para consultar o horário.' };
+    }
+
+    try {
+        const hours = await getOperatingHours();
+        return {
+            hours: hours ? {
+                currentStatus: hours.currentStatus,
+                openingTime: hours.openingTime,
+                closingTime: hours.closingTime,
+                additionalNotes: hours.additionalNotes ?? '',
+            } : null,
+            error: null,
+        };
+    } catch (error) {
+        console.error('Erro ao carregar horário:', error);
+        return { hours: null, error: databaseFailure(error, 'o horário de funcionamento') };
+    }
+}
+
+export async function saveOperatingHoursAction(_prevState, formData) {
+    const currentAdminId = await getCurrentAdminId();
+    if (!currentAdminId) {
+        return { error: 'Sua sessão expirou. Entre novamente para salvar o horário.' };
+    }
+
+    const validation = operatingHoursSchema.safeParse({
+        currentStatus: formData.get('currentStatus'),
+        openingTime: formData.get('openingTime'),
+        closingTime: formData.get('closingTime'),
+        additionalNotes: formData.get('additionalNotes'),
+    });
+    if (!validation.success) {
+        return {
+            errors: validation.error.flatten().fieldErrors,
+            message: 'Confira o status e os horários informados.',
+        };
+    }
+
+    try {
+        await saveOperatingHours(validation.data);
+        await logAdminAction(currentAdminId, 'ATUALIZOU HORARIO DE FUNCIONAMENTO');
+        revalidatePath('/admin/horarioFuncionamento');
+        revalidatePath('/');
+        return { success: true, message: 'Horário de funcionamento salvo.' };
+    } catch (error) {
+        console.error('Erro ao salvar horário de funcionamento:', error);
+        return { error: databaseFailure(error, 'o horário de funcionamento') };
+    }
 }
 
 export async function postNewsActions(_prevState, formData) {

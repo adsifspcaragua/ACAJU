@@ -1,30 +1,59 @@
 "use client";
 
-import React, { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import '@/app/admin/page.admin.css';
+import { getTeamMembersAction, registerAction } from '@/actions/auth';
 
-import { useActionState } from 'react';
-import { registerAction } from '@/actions/auth';
-import Link from 'next/link';
+function formatLastAccess(value) {
+  if (!value) return 'Nunca acessou';
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(new Date(value));
+}
 
 export default function GestaoUsuarios() {
   const [state, formAction, isPending] = useActionState(registerAction, null);
+  const [usuarios, setUsuarios] = useState([]);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(true);
+  const [membersError, setMembersError] = useState('');
 
-  const [usuarios, setUsuarios] = useState([
-    {
-      id: "1",
-      nome: "Ana Julia Santana",
-      ultimoAcesso: "04/09/2026 18:30",
-      totalPublicacoes: 12
-    },
-    {
-      id: "2",
-      nome: "João das Neves",
-      ultimoAcesso: "02/09/2026 10:15",
-      totalPublicacoes: 5
-    }
-  ]);
+  useEffect(() => {
+    let isActive = true;
+
+    getTeamMembersAction()
+      .then((result) => {
+        if (!isActive) return;
+        setUsuarios(result.members);
+        setMembersError(result.error ?? '');
+      })
+      .catch(() => {
+        if (isActive) setMembersError('Não foi possível carregar a equipe. Tente atualizar a página.');
+      })
+      .finally(() => {
+        if (isActive) setIsLoadingMembers(false);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!state?.member) return;
+
+    setUsuarios((currentMembers) => {
+      if (currentMembers.some((member) => member.id === state.member.id)) {
+        return currentMembers;
+      }
+
+      return [...currentMembers, state.member].sort((first, second) =>
+        first.name.localeCompare(second.name, 'pt-BR'),
+      );
+    });
+  }, [state]);
 
   return (
     <div style={styles.container}>
@@ -46,48 +75,54 @@ export default function GestaoUsuarios() {
             <h2 style={styles.cardTitle}>Novo Usuário</h2>
 
             {state?.message && (
-              <p className={`text-sm text-center ${state.success ? 'text-green-600' : 'text-red-500'}`}>
+              <p
+                role={state.success ? 'status' : 'alert'}
+                style={state.success ? styles.successMessage : styles.errorMessage}
+              >
                 {state.message}
               </p>
             )}
 
             <div style={styles.row}>
               <div style={styles.inputGroupHalf}>
-                <label style={styles.label}>NOME COMPLETO</label>
+                <label htmlFor="admin-name" style={styles.label}>NOME COMPLETO</label>
                 <input
+                  id="admin-name"
                   type="text"
                   name="name"
                   placeholder="Ex: Ana Julia Santana"
                   style={styles.input}
                   required
                 />
+                {state?.errors?.name && <span style={styles.fieldError}>{state.errors.name[0]}</span>}
               </div>
 
               <div style={styles.inputGroupHalf}>
-                <label style={styles.label}>E-MAIL</label>
+                <label htmlFor="admin-email" style={styles.label}>E-MAIL</label>
                 <input
+                  id="admin-email"
                   type="email"
                   name="email"
                   placeholder="Ex: anajulia@email.com"
                   style={styles.input}
                   required
                 />
+                {state?.errors?.email && <span style={styles.fieldError}>{state.errors.email[0]}</span>}
               </div>
             </div>
 
             <div style={styles.row}>
               <div style={styles.inputGroupHalf}>
-                <label style={styles.label}>SENHA PROVISÓRIA</label>
+                <label htmlFor="admin-pass" style={styles.label}>SENHA PROVISÓRIA</label>
                 <input
+                  id="admin-pass"
                   type="password"
                   name="pass"
                   placeholder="Digite uma senha inicial..."
                   style={styles.input}
                   required
                 />
-                {state?.errors?.pass && (
-                  <span className="text-red-500 text-xs">{state.errors.pass[0]}</span>
-                )}
+                {state?.errors?.pass && <span style={styles.fieldError}>{state.errors.pass[0]}</span>}
               </div>
             </div>
 
@@ -99,6 +134,7 @@ export default function GestaoUsuarios() {
 
           <div style={styles.card}>
             <h2 style={styles.tableCardTitle}>MEMBROS DA EQUIPE</h2>
+            {membersError && <p role="alert" style={styles.errorMessage}>{membersError}</p>}
 
             <div style={styles.tableContainer}>
               <table style={styles.table}>
@@ -110,18 +146,15 @@ export default function GestaoUsuarios() {
                   </tr>
                 </thead>
                 <tbody>
-                  {usuarios.map((user) => (
+                  {isLoadingMembers ? (
+                    <tr><td colSpan={3} style={styles.tdAccess}>Carregando equipe...</td></tr>
+                  ) : membersError ? null : usuarios.length === 0 ? (
+                    <tr><td colSpan={3} style={styles.tdAccess}>Nenhum administrador cadastrado.</td></tr>
+                  ) : usuarios.map((user) => (
                     <tr key={user.id} style={styles.tableBodyRow}>
-                      <td style={styles.tdName}>{user.nome}</td>
-                      <td style={styles.tdAccess}>{user.ultimoAcesso}</td>
-                      <td style={styles.tdPublications}>
-                        <Link 
-                          href={`/admin/usuarios/${user.id}/publicacoes`} 
-                          style={styles.linkPublications}
-                        >
-                          Ver publicações ({user.totalPublicacoes})
-                        </Link>
-                      </td>
+                      <td style={styles.tdName}>{user.name}</td>
+                      <td style={styles.tdAccess}>{formatLastAccess(user.lastAccess)}</td>
+                      <td style={styles.tdPublications}>{user.totalPublications}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -212,6 +245,24 @@ const styles = {
     alignSelf: "center",
     letterSpacing: "0.5px",
     textTransform: "uppercase",
+  },
+  successMessage: {
+    margin: 0,
+    color: "#166534",
+    textAlign: "center",
+    fontSize: "14px",
+  },
+  errorMessage: {
+    margin: 0,
+    padding: "12px 16px",
+    borderLeft: "4px solid #b91c1c",
+    backgroundColor: "#fef2f2",
+    color: "#7f1d1d",
+    fontSize: "14px",
+  },
+  fieldError: {
+    color: "#b91c1c",
+    fontSize: "12px",
   },
   tableCardTitle: {
     margin: 0,

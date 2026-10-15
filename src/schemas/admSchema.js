@@ -138,3 +138,54 @@ export const createDocumentoSchema = z.object({
         .trim()
         .min(10, { message: 'Forneça uma breve descrição do documento.' }),
 });
+
+const publicationTitleSchema = z.string().trim()
+    .min(3, { message: 'O título deve ter no mínimo 3 caracteres.' })
+    .max(255, { message: 'O título deve ter no máximo 255 caracteres.' });
+
+const publicationDescriptionSchema = z.string().trim()
+    .min(10, { message: 'O conteúdo deve ter no mínimo 10 caracteres.' });
+
+export const updatePublicationSchemas = {
+    'Notícia': z.object({
+        title: publicationTitleSchema,
+        content: publicationDescriptionSchema,
+        videoUrl: youtubeUrlSchema,
+    }),
+    'Mutirão': z.object({
+        name: publicationTitleSchema,
+        type: z.enum(['limpeza', 'plantio', 'outro']),
+        date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Informe uma data válida.' }),
+        time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, { message: 'Informe um horário válido.' }),
+        location: z.string().trim().min(3, { message: 'Informe o local.' }),
+        environment: z.enum(['praia', 'rio', 'mangue', 'restinga', 'urbano']),
+        description: publicationDescriptionSchema,
+    }),
+    'Projeto': z.object({
+        title: publicationTitleSchema,
+        coordinator: z.string().trim().min(3, { message: 'Informe o nome do coordenador.' }),
+        objective: publicationDescriptionSchema,
+        bodyContent: publicationDescriptionSchema,
+        videoUrl: youtubeUrlSchema,
+    }),
+    'Memória Caiçara': z.object({
+        title: publicationTitleSchema,
+        content: publicationDescriptionSchema,
+        videoUrl: youtubeUrlSchema,
+    }),
+    'Mini-Museu': z.object({
+        title: publicationTitleSchema,
+        description: z.string().trim().optional(),
+    }),
+    'Documentos': z.object({
+        name: publicationTitleSchema,
+        description: publicationDescriptionSchema,
+    }),
+};
+
+export const operatingHoursSchema = z.object({
+    currentStatus: z.enum(['ABERTO', 'FECHADO', 'MANUTENCAO']),
+    openingTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, { message: 'Informe um horário de abertura válido.' }),
+    closingTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, { message: 'Informe um horário de fechamento válido.' }),
+    additionalNotes: z.string().trim().optional(),
+});

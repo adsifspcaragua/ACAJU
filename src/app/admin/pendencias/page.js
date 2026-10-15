@@ -1,45 +1,53 @@
 "use client";
 
-import React, { useState } from "react";
+import { startTransition, useCallback, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import CardPendencia from "../../../components/CardPendencia";
 import ModalAnalisePublicacao from "../../../components/ModalAnalisePublicacao";
+import { getAdminPendingPublicationsAction } from '@/actions/admActions';
 import '@/app/admin/page.admin.css';
 
-const pendencias = [
-  {
-    id: 1,
-    tipo: "NOTÍCIA",
-    status: "AGUARDANDO",
-    titulo: "Mutirão de Limpeza no Rio Juqueriquerê",
-    autor: "Editor João",
-    data: "10/10/2026",
-    descricao: "Iniciativa comunitária para remoção de resíduos das margens do rio."
-  },
-  {
-    id: 2,
-    tipo: "PROJETO",
-    status: "AGUARDANDO",
-    titulo: "Reflorestamento de Restinga",
-    autor: "Editora Maria",
-    data: "11/10/2026",
-    descricao: "Plantio de mudas nativas na orla da praia."
-  }
-];
-
 export default function Pendencias() {
+  const [pendencias, setPendencias] = useState([]);
   const [itemSelecionado, setItemSelecionado] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+
+  useEffect(() => {
+    let isActive = true;
+
+    startTransition(async () => {
+      try {
+        const result = await getAdminPendingPublicationsAction();
+        if (!isActive) return;
+        setPendencias(result.publications ?? []);
+        setLoadError(result.error ?? '');
+      } catch {
+        if (isActive) setLoadError('Não foi possível carregar as pendências. Atualize a página para tentar novamente.');
+      } finally {
+        if (isActive) setIsLoading(false);
+      }
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const handleAbrirAnalise = (item) => {
     setItemSelecionado(item);
     setIsModalOpen(true);
   };
 
-  const handleFecharAnalise = () => {
+  const handleFecharAnalise = useCallback(() => {
     setIsModalOpen(false);
     setItemSelecionado(null);
-  };
+  }, []);
+
+  const handleReviewed = useCallback((id) => {
+    setPendencias((current) => current.filter((item) => item.id !== id));
+  }, []);
 
   return (
     <div style={styles.container}>
@@ -53,7 +61,13 @@ export default function Pendencias() {
           </div>
         </div>
 
+        {loadError && <p role="alert" style={styles.errorMessage}>{loadError}</p>}
+
         <div style={styles.listContainer}>
+          {isLoading && <p style={styles.emptyMessage}>Carregando pendências...</p>}
+          {!isLoading && !loadError && pendencias.length === 0 && (
+            <p style={styles.emptyMessage}>Não há publicações aguardando análise.</p>
+          )}
           {pendencias.map((item) => (
             <CardPendencia 
               key={item.id} 
@@ -64,8 +78,10 @@ export default function Pendencias() {
         </div>
 
         <ModalAnalisePublicacao 
+          key={itemSelecionado?.id ?? 'review-modal'}
           isOpen={isModalOpen}
           onClose={handleFecharAnalise}
+          onReviewed={handleReviewed}
           item={itemSelecionado}
         />
       </main>
@@ -128,6 +144,24 @@ const styles = {
     gap: "24px",
     width: "100%",
     maxWidth: "950px",
+    boxSizing: "border-box",
+  },
+  errorMessage: {
+    width: "100%",
+    maxWidth: "950px",
+    padding: "12px 16px",
+    borderLeft: "4px solid #b91c1c",
+    backgroundColor: "#fef2f2",
+    color: "#7f1d1d",
+    boxSizing: "border-box",
+  },
+  emptyMessage: {
+    width: "100%",
+    padding: "20px",
+    backgroundColor: "#ffffff",
+    borderRadius: "8px",
+    color: "#475569",
+    textAlign: "center",
     boxSizing: "border-box",
   },
 };

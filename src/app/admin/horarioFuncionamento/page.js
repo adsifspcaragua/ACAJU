@@ -1,12 +1,42 @@
 "use client";
 
-import React, { useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import '@/app/admin/page.admin.css';
-import AdminEditor from "@/components/AdminEditor";
+import FormFeedback from '@/components/FormFeedback';
+import { getOperatingHoursAction, saveOperatingHoursAction } from '@/actions/admActions';
 
 export default function HorarioFuncionamento() {
-  const [status, setStatus] = useState("Aberto para Visitação");
+  const [state, formAction, isPending] = useActionState(saveOperatingHoursAction, null);
+  const [hours, setHours] = useState({
+    currentStatus: 'ABERTO',
+    openingTime: '08:00',
+    closingTime: '17:00',
+    additionalNotes: '',
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+
+  useEffect(() => {
+    let isActive = true;
+
+    startTransition(async () => {
+      try {
+        const result = await getOperatingHoursAction();
+        if (!isActive) return;
+        if (result.hours) setHours(result.hours);
+        setLoadError(result.error ?? '');
+      } catch {
+        if (isActive) setLoadError('Não foi possível carregar o horário atual. Os valores exibidos são apenas sugestões até salvar.');
+      } finally {
+        if (isActive) setIsLoading(false);
+      }
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   return (
     <div style={styles.container}>
@@ -20,47 +50,73 @@ export default function HorarioFuncionamento() {
           </div>
         </div>
 
-        <form style={styles.card} onSubmit={(e) => e.preventDefault()}>
+        <form style={styles.card} action={formAction}>
+          {state?.success ? (
+            <output style={styles.successMessage}>{state.message}</output>
+          ) : (
+            <FormFeedback state={state} />
+          )}
+          {loadError && <p role="alert" style={styles.errorMessage}>{loadError}</p>}
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>STATUS ATUAL</label>
+            <label htmlFor="operating-status" style={styles.label}>STATUS ATUAL</label>
             <select 
-              value={status} 
-              onChange={(e) => setStatus(e.target.value)} 
+              id="operating-status"
+              name="currentStatus"
+              value={hours.currentStatus}
+              onChange={(event) => setHours((current) => ({ ...current, currentStatus: event.target.value }))}
               style={styles.select}
+              required
             >
-              <option value="Aberto para Visitação">Aberto para Visitação</option>
-              <option value="Fechado temporariamente">Fechado temporariamente</option>
-              <option value="Em manutenção">Em manutenção</option>
+              <option value="ABERTO">Aberto para visitação</option>
+              <option value="FECHADO">Fechado temporariamente</option>
+              <option value="MANUTENCAO">Em manutenção</option>
             </select>
           </div>
 
           <div style={styles.row}>
             <div style={styles.inputGroupHalf}>
-              <label style={styles.label}>HORÁRIO DE ABERTURA</label>
+              <label htmlFor="opening-time" style={styles.label}>HORÁRIO DE ABERTURA</label>
               <input 
+                id="opening-time"
                 type="time" 
-                defaultValue="08:00" 
+                name="openingTime"
+                value={hours.openingTime}
+                onChange={(event) => setHours((current) => ({ ...current, openingTime: event.target.value }))}
                 style={styles.input}
+                required
               />
             </div>
 
             <div style={styles.inputGroupHalf}>
-              <label style={styles.label}>HORÁRIO DE FECHAMENTO</label>
+              <label htmlFor="closing-time" style={styles.label}>HORÁRIO DE FECHAMENTO</label>
               <input 
+                id="closing-time"
                 type="time" 
-                defaultValue="17:00" 
+                name="closingTime"
+                value={hours.closingTime}
+                onChange={(event) => setHours((current) => ({ ...current, closingTime: event.target.value }))}
                 style={styles.input}
+                required
               />
             </div>
           </div>
 
           <div style={styles.inputGroupFull}>
-            <label style={styles.label}>OBSERVAÇÕES ADICIONAIS</label>
-            <AdminEditor />
+            <label htmlFor="additional-notes" style={styles.label}>OBSERVAÇÕES ADICIONAIS</label>
+            <textarea
+              id="additional-notes"
+              name="additionalNotes"
+              value={hours.additionalNotes}
+              onChange={(event) => setHours((current) => ({ ...current, additionalNotes: event.target.value }))}
+              style={styles.textarea}
+              rows={5}
+            />
           </div>
 
-          <button type="submit" style={styles.submitButton}>Salvar</button>
+          <button type="submit" style={styles.submitButton} disabled={isPending || isLoading}>
+            {isPending ? 'Salvando...' : 'Salvar horário'}
+          </button>
 
         </form>
       </main>
@@ -206,5 +262,21 @@ const styles = {
     alignSelf: "center",
     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
     fontFamily: "inherit",
+  },
+  errorMessage: {
+    margin: 0,
+    padding: "12px 16px",
+    borderLeft: "4px solid #b91c1c",
+    backgroundColor: "#fef2f2",
+    color: "#7f1d1d",
+    fontSize: "14px",
+  },
+  successMessage: {
+    margin: 0,
+    padding: "12px 16px",
+    borderLeft: "4px solid #15803d",
+    backgroundColor: "#f0fdf4",
+    color: "#166534",
+    fontSize: "14px",
   },
 };

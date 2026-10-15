@@ -1,32 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { reviewAdminPublicationAction } from '@/actions/admActions';
+import FormFeedback from '@/components/FormFeedback';
 
-export default function ModalAnalisePublicacao({ isOpen, onClose, item }) {
+export default function ModalAnalisePublicacao({ isOpen, onClose, onReviewed, item }) {
   const [mostrarRejeicao, setMostrarRejeicao] = useState(false);
-  const [justificativa, setJustificativa] = useState("");
+  const [reviewState, reviewAction, isPending] = useActionState(reviewAdminPublicationAction, null);
+
+  useEffect(() => {
+    if (!reviewState?.success || !item) return;
+    onReviewed(item.id);
+    setMostrarRejeicao(false);
+    onClose();
+  }, [reviewState, item, onReviewed, onClose]);
 
   if (!isOpen || !item) return null;
 
   const isProjeto = item.tipo?.toUpperCase() === "PROJETO";
 
-  const handleAprovar = () => {
-
-    handleCloseModal();
-  };
-
-  const handleConfirmarRejeicao = () => {
-    if (!justificativa.trim()) {
-      alert("A justificativa de rejeição é obrigatória.");
-      return;
-    }
-
-    handleCloseModal();
-  };
-
   const handleCloseModal = () => {
     setMostrarRejeicao(false);
-    setJustificativa("");
     onClose();
   };
 
@@ -38,7 +32,7 @@ export default function ModalAnalisePublicacao({ isOpen, onClose, item }) {
           <span style={styles.typeBadge}>
             {isProjeto ? "PROJETO" : "NOTÍCIA"} (AGUARDANDO ANÁLISE)
           </span>
-          <button onClick={handleCloseModal} style={styles.closeBtn}>
+          <button type="button" onClick={handleCloseModal} style={styles.closeBtn}>
             ✕
           </button>
         </div>
@@ -46,7 +40,7 @@ export default function ModalAnalisePublicacao({ isOpen, onClose, item }) {
         <div style={styles.titleSection}>
           <h2 style={styles.mainTitle}>{item.titulo}</h2>
           <p style={styles.metaInfo}>
-            Enviado por: <strong>{item.autor}</strong> em {item.data}
+            Enviado por: <strong>{item.autor}</strong> em {new Intl.DateTimeFormat('pt-BR').format(new Date(item.data))}
           </p>
         </div>
 
@@ -55,29 +49,30 @@ export default function ModalAnalisePublicacao({ isOpen, onClose, item }) {
           {isProjeto && (
             <>
               <div style={styles.sectionGroup}>
-                <label style={styles.fieldLabel}>COORDENADOR</label>
+                <span style={styles.fieldLabel}>COORDENADOR</span>
                 <div style={styles.fieldValue}>{item.coordenador || "Não informado"}</div>
               </div>
 
               <div style={styles.sectionGroup}>
-                <label style={styles.fieldLabel}>OBJETIVO</label>
+                <span style={styles.fieldLabel}>OBJETIVO</span>
                 <div style={styles.fieldValue}>{item.objetivo || "Sem objetivo cadastrado."}</div>
               </div>
             </>
           )}
 
           <div style={styles.sectionGroup}>
-            <label style={styles.fieldLabel}>
+            <span style={styles.fieldLabel}>
               {isProjeto ? "CORPO DO PROJETO (TEXTO DETALHADO)" : "CONTEÚDO PRINCIPAL"}
-            </label>
+            </span>
             <div 
               style={styles.contentBox}
-              dangerouslySetInnerHTML={{ __html: item.conteudo || item.descricao || "Sem conteúdo inserido." }}
-            />
+            >
+              {item.conteudo || item.descricao || "Sem conteúdo inserido."}
+            </div>
           </div>
 
           <div style={styles.sectionGroup}>
-            <label style={styles.fieldLabel}>IMAGEM DE CAPA</label>
+            <span style={styles.fieldLabel}>IMAGEM DE CAPA</span>
             {item.imagemCapa ? (
               <img src={item.imagemCapa} alt="Capa" style={styles.coverImage} />
             ) : (
@@ -86,7 +81,7 @@ export default function ModalAnalisePublicacao({ isOpen, onClose, item }) {
           </div>
 
           <div style={styles.sectionGroup}>
-            <label style={styles.fieldLabel}>VÍDEO (LINK DO YOUTUBE)</label>
+            <span style={styles.fieldLabel}>VÍDEO (LINK DO YOUTUBE)</span>
             {item.videoUrl ? (
               <a 
                 href={item.videoUrl} 
@@ -102,13 +97,13 @@ export default function ModalAnalisePublicacao({ isOpen, onClose, item }) {
           </div>
 
           <div style={styles.sectionGroup}>
-            <label style={styles.fieldLabel}>
+            <span style={styles.fieldLabel}>
               {isProjeto ? "FOTOS DO PROJETO" : "FOTOS DA NOTÍCIA"} (GALERIA)
-            </label>
+            </span>
             {item.galeria && item.galeria.length > 0 ? (
               <div style={styles.galleryGrid}>
-                {item.galeria.map((imgSrc, index) => (
-                  <img key={index} src={imgSrc} alt={`Galeria ${index + 1}`} style={styles.galleryImg} />
+                {item.galeria.map((imgSrc) => (
+                  <img key={imgSrc} src={imgSrc} alt="Imagem da publicação" style={styles.galleryImg} />
                 ))}
               </div>
             ) : (
@@ -122,29 +117,39 @@ export default function ModalAnalisePublicacao({ isOpen, onClose, item }) {
 
         <hr style={styles.divider} />
 
-        <div style={styles.buttonGroup}>
-          <button onClick={handleAprovar} style={styles.btnAprovar}>
-            Aprovar
-          </button>
-          <button onClick={() => setMostrarRejeicao(true)} style={styles.btnRejeitar}>
-            Rejeitar
-          </button>
-        </div>
+        <FormFeedback state={reviewState} />
 
-        {mostrarRejeicao && (
-          <div style={styles.rejeicaoBox}>
-            <label style={styles.labelRejeicao}>JUSTIFICATIVA DA REJEIÇÃO (OBRIGATÓRIO)</label>
-            <textarea
-              value={justificativa}
-              onChange={(e) => setJustificativa(e.target.value)}
-              placeholder="Explique ao editor o motivo da rejeição..."
-              style={styles.textarea}
-            />
-            <button onClick={handleConfirmarRejeicao} style={styles.btnConfirmar}>
-              Confirmar Envio do Feedback
+        <form action={reviewAction} style={styles.reviewForm}>
+          <input type="hidden" name="id" value={item.recordId} />
+          <input type="hidden" name="category" value={item.category} />
+          {mostrarRejeicao && (
+            <div style={styles.rejeicaoBox}>
+              <label htmlFor="review-reason" style={styles.labelRejeicao}>JUSTIFICATIVA DA REJEIÇÃO (OBRIGATÓRIA)</label>
+              <textarea
+                id="review-reason"
+                name="reason"
+                required
+                minLength={5}
+                placeholder="Explique o motivo da rejeição..."
+                style={styles.textarea}
+              />
+            </div>
+          )}
+          <div style={styles.buttonGroup}>
+            <button type="submit" name="decision" value="APPROVED" disabled={isPending} style={styles.btnAprovar}>
+              {isPending ? 'Salvando...' : 'Aprovar'}
             </button>
+            {mostrarRejeicao ? (
+              <button type="submit" name="decision" value="REJECTED" disabled={isPending} style={styles.btnRejeitar}>
+                Confirmar rejeição
+              </button>
+            ) : (
+              <button type="button" onClick={() => setMostrarRejeicao(true)} style={styles.btnRejeitar}>
+                Rejeitar
+              </button>
+            )}
           </div>
-        )}
+        </form>
 
       </div>
     </div>
@@ -335,6 +340,11 @@ const styles = {
     display: "flex",
     gap: "16px",
     justifyContent: "center",
+  },
+  reviewForm: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "14px",
   },
   btnAprovar: {
     backgroundColor: "#058339",

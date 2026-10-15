@@ -1,14 +1,20 @@
 'use server';
 
 import { loginSchema, registerSchema, updateProfileSchema, changePasswordSchema } from '@/schemas/authSchema';
-import { autenticarAdmin, cadastrarAdmin, atualizarDadosAdmin, alterarSenhaAdmin, createAdminLog } from '@/services/authService';
+import { autenticarAdmin, cadastrarAdmin, atualizarDadosAdmin, alterarSenhaAdmin, listarAdmins } from '@/services/authService';
 import { createSession, deleteSession, decrypt } from '../lib/session'
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers'
 import { logAdminAction } from '@/lib/logger';
 
-export async function loginAction(prevState, formData) {
+async function getCurrentAdminId() {
+  const cookieStore = await cookies();
+  const session = await decrypt(cookieStore.get('session')?.value);
+  return session?.userId ?? null;
+}
+
+export async function loginAction(_prevState, formData) {
   const rawData = {
     email: formData.get('email'),
     pass: formData.get('pass'),
@@ -40,10 +46,10 @@ export async function loginAction(prevState, formData) {
 }
 
 
-export async function registerAction(prevState, formData) {
-  const currentAdminId = await getSessionUserId();
+export async function registerAction(_prevState, formData) {
+  const currentAdminId = await getCurrentAdminId();
   if (!currentAdminId) {
-    return { generalError: 'Sessão expirada. Faça login novamente.' };
+    return { success: false, message: 'Sua sessão expirou. Entre novamente para cadastrar um administrador.' };
   }
 
   const rawData = {
@@ -55,27 +61,69 @@ export async function registerAction(prevState, formData) {
   const validation = registerSchema.safeParse(rawData);
   if (!validation.success) {
     return {
+      success: false,
       errors: validation.error.flatten().fieldErrors,
-      message: 'Preencha todos os campos corretamente.',
+      message: 'Confira os campos destacados e tente novamente.',
     };
   }
 
   try {
-    await cadastrarAdmin(validation.data);
+    const newAdmin = await cadastrarAdmin(validation.data);
     await logAdminAction(currentAdminId, 'CADASTRAR NOVO ADM');
-    revalidatePath('/admin');
+    revalidatePath('/admin/gerenciarEquipe');
 
-    return { success: true, message: 'Administrador cadastrado com sucesso!' };
+    return {
+      success: true,
+      message: 'Administrador cadastrado com sucesso!',
+      member: {
+        id: newAdmin.id,
+        name: newAdmin.name,
+        lastAccess: null,
+        totalPublications: 0,
+      },
+    };
   } catch (error) {
-    if (error.message === 'EMAIL_DUPLICADO') {
-      return { message: 'Este e-mail já está cadastrado no sistema.' };
+    console.error('Erro ao cadastrar administrador:', error);
+
+    if (error.message === 'EMAIL_DUPLICADO' || error.code === 'P2002') {
+      return { success: false, message: 'Este e-mail já está cadastrado. Use outro endereço.' };
     }
-    return { message: 'Erro interno ao cadastrar administrador.' };
+
+    if (error.code === 'P2021' || error.code === 'P2022') {
+      return { success: false, message: 'A tabela de administradores está diferente do schema Prisma. Atualize o banco e tente novamente.' };
+    }
+
+    const code = error.code ? ` (código ${error.code})` : '';
+    return { success: false, message: `Não foi possível salvar o administrador. Verifique o banco de dados e tente novamente${code}.` };
   }
 }
 
-export async function updateProfileAction(prevState, formData) {
-  const adminId = await getSessionUserId();
+export async function getTeamMembersAction() {
+  const currentAdminId = await getCurrentAdminId();
+  if (!currentAdminId) {
+    return { members: [], error: 'Sua sessão expirou. Entre novamente para consultar a equipe.' };
+  }
+
+  try {
+    const admins = await listarAdmins();
+    return {
+      members: admins.map((admin) => ({
+        ...admin,
+        lastAccess: admin.lastAccess?.toISOString() ?? null,
+      })),
+      error: null,
+    };
+  } catch (error) {
+    console.error('Erro ao carregar membros da equipe:', error);
+    return {
+      members: [],
+      error: 'Não foi possível carregar a equipe. Verifique a conexão e as tabelas do banco de dados.',
+    };
+  }
+}
+
+export async function updateProfileAction(_prevState, formData) {
+  const adminId = await getCurrentAdminId();
   if (!adminId) {
     return { generalError: 'Sessão expirada. Faça login novamente.' };
   }
@@ -111,9 +159,9 @@ export async function updateProfileAction(prevState, formData) {
   }
 }
 
-export async function changePasswordAction(prevState, formData) {
+export async function changePasswordAction(_prevState, formData) {
 
-  const adminId = await getSessionUserId();
+  const adminId = await getCurrentAdminId();
   if (!adminId) {
     return { generalError: 'Sessão expirada. Faça login novamente.' };
   }

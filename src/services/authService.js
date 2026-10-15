@@ -54,6 +54,37 @@ export async function cadastrarAdmin({ name, email, pass }) {
   return adminSemSenha;
 }
 
+export async function listarAdmins() {
+  const admins = await prisma.aDM.findMany({
+    orderBy: { name: 'asc' },
+    select: {
+      id: true,
+      name: true,
+      admlog: {
+        where: { action: 'LOGIN' },
+        orderBy: { loginAt: 'desc' },
+        take: 1,
+        select: { loginAt: true },
+      },
+      _count: {
+        select: {
+          news: true,
+          mutirao: true,
+          documents: true,
+          miniMuseu: true,
+        },
+      },
+    },
+  });
+
+  return admins.map((admin) => ({
+    id: admin.id,
+    name: admin.name,
+    lastAccess: admin.admlog[0]?.loginAt ?? null,
+    totalPublications: Object.values(admin._count).reduce((total, count) => total + count, 0),
+  }));
+}
+
 export async function atualizarDadosAdmin({ id, name, email }) {
   const emailEmUso = await prisma.aDM.findFirst({
     where: {
@@ -77,7 +108,7 @@ export async function atualizarDadosAdmin({ id, name, email }) {
   return adminSemSenha;
 }
 
-export async function alterarSenhaAdmin({ id, currentPass, newPass, confirmPass }) {
+export async function alterarSenhaAdmin({ id, currentPass, newPass }) {
   const admin = await prisma.aDM.findUnique({
     where: { id },
   });

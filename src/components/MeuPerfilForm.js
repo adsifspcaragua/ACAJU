@@ -66,18 +66,6 @@ export default function GerenciarUsuario({ admin }) {
                   <span className="text-red-500 text-xs">{state.errors.email[0]}</span>
                 )}
               </div>
-            </div>
-
-            <div style={styles.row}>
-              <div style={styles.inputGroupHalf}>
-                <label style={styles.label}>PERFIL DE ACESSO</label>
-                <input
-                  type="text"
-                  placeholder="Ex: Administrador"
-                  style={styles.input}
-                  disabled
-                />
-              </div>
 
               <div style={styles.inputGroupHalf}>
                 <label style={styles.label}>DATA DE CADASTRO</label>
@@ -90,7 +78,7 @@ export default function GerenciarUsuario({ admin }) {
                 />
               </div>
             </div>
-
+            
             <button type="submit" disabled={isPending} className="admin-submit-btn">
               {isPending ? 'Salvando...' : 'Salvar Alterações'}
             </button>
@@ -151,7 +139,7 @@ export default function GerenciarUsuario({ admin }) {
                   <span style={{ color: 'red', fontSize: '12px' }}>
                     {passState.errors.confirmPass[0]}
                   </span>
-                )}  
+                )}
               </div>
             </div>
 
