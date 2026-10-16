@@ -60,9 +60,9 @@ export default function NavbarACAJU() {
               🕒 Segunda à Sexta — 9h às 17h
             </span>
           </div>
-          <div style={styles.topBarRight}>
-             <Link href="/admin/login" style={styles.topBarItem}>
-              <span style={styles.servidorText}>SERVIDOR</span>
+          <div className={styles.topBarRight}>
+             <Link href="/admin/login" className={styles.topBarItem}>
+              <span className={styles.servidorText}>SERVIDOR</span>
             </Link>
             <span className={styles.divider}>|</span>
             <div className={styles.socialIcons}>
@@ -82,13 +82,6 @@ export default function NavbarACAJU() {
 
       <header className={styles.navbar} style={{ justifyContent: navJustify }}>
         <Link href="/" className={styles.logoContainer}>
-          <Image 
-            src="/logo-only.svg" 
-            alt="Logo ACAJU" 
-            width={42} 
-            height={42} 
-            priority
-          />
           <span className={styles.logoText}>ACAJU</span>
         </Link>
 
@@ -107,8 +100,8 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('quem-somos')}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/quem-somos" style={styles.linkText}>
-                  <span style={styles.navItem}>Quem Somos</span>
+                <Link href="/quem-somos" className={styles.linkText}>
+                  <span className={styles.navItem}>Quem Somos</span>
                 </Link>
               </li>
 
@@ -189,8 +182,8 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('memorias')}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/memorias" style={styles.linkText}>
-                  <span style={styles.navItem}>Memórias Caiçaras</span>
+                <Link href="/memorias" className={styles.linkText}>
+                  <span className={styles.navItem}>Memórias Caiçaras</span>
                 </Link>
               </li>
               
@@ -217,43 +210,21 @@ export default function NavbarACAJU() {
                       onMouseEnter={() => setHoveredSubItem('contato')}
                       onMouseLeave={() => setHoveredSubItem(null)}
                     >
-                      <Link href="/fale-conosco" style={styles.linkText}>Contato</Link>
+                      <Link href="/contatos" className={styles.linkText}>Contato</Link>
                     </li>
                   </ul>
                 )}
               </li>
 
-              <li 
-                style={{ ...styles.navItemContainer, ...(activeMenu === 'participe' ? styles.navItemContainerHover : {}) }}
-                onMouseEnter={() => handleMouseEnter('participe')}
-                onMouseLeave={handleMouseLeave}
-              >
-                <span style={styles.navItem}>Participe ˅</span>
-                {activeMenu === 'participe' && (
-                  <ul style={styles.dropdownMenu}>
-                    <li 
-                      style={hoveredSubItem === 'doacoes' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
-                      onMouseEnter={() => setHoveredSubItem('doacoes')}
-                      onMouseLeave={() => setHoveredSubItem(null)}
-                    >
-                      <Link href="/doacoes" style={styles.linkText}>Doações</Link>
-                    </li>
-                    <li 
-                      style={hoveredSubItem === 'inventario-part' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
-                      onMouseEnter={() => setHoveredSubItem('inventario-part')}
-                      onMouseLeave={() => setHoveredSubItem(null)}
-                    >
-                      <Link href="/inventario-participativo" style={styles.linkText}>Inventário Participativo</Link>
-                    </li>
-                    <li 
-                      style={hoveredSubItem === 'trocas' ? { ...styles.dropdownItem, ...styles.dropdownItemHover } : styles.dropdownItem}
-                      onMouseEnter={() => setHoveredSubItem('trocas')}
-                      onMouseLeave={() => setHoveredSubItem(null)}
-                    >
-                      <Link href="/trocas" style={styles.linkText}>Trocas</Link>
-                    </li>
-                  </ul>
-                )}
+              <li className={styles.participeContainer}>
+                <Link 
+                  href="/participe" 
+                  className={`${styles.participeButton} ${activeMenu === 'participe' ? styles.participeButtonHover : ''}`}
+                  onMouseEnter={() => handleMouseEnter('participe')}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  Participe
+                </Link>
               </li>
 
             </ul>
@@ -285,7 +256,7 @@ export default function NavbarACAJU() {
               onMouseEnter={() => setHoveredMobileItem('quem-somos')}
               onMouseLeave={() => setHoveredMobileItem(null)}
             >
-              <Link href="/quem-somos" style={styles.linkText}>Quem Somos</Link>
+              <Link href="/quem-somos" className={styles.linkText}>Quem Somos</Link>
             </div>
             
             <div className={styles.mobileAccordionGroup}>
@@ -376,7 +347,7 @@ export default function NavbarACAJU() {
               onMouseEnter={() => setHoveredMobileItem('memorias')}
               onMouseLeave={() => setHoveredMobileItem(null)}
             >
-              <Link href="/memorias" style={styles.linkText}>Memórias Caiçaras</Link>
+              <Link href="/memorias" className={styles.linkText}>Memórias Caiçaras</Link>
             </div>
             
             <div 
@@ -406,47 +377,47 @@ export default function NavbarACAJU() {
                     onMouseEnter={() => setHoveredMobileItem('sub-contato')}
                     onMouseLeave={() => setHoveredMobileItem(null)}
                   >
-                    <Link href="/fale-conosco" style={styles.linkText}>Contato</Link>
+                    <Link href="/contatos" className={styles.linkText}>Contato</Link>
                   </div>
                 </div>
               )}
             </div>
 
-            <div style={styles.mobileAccordionGroup}>
+            <div className={styles.mobileAccordionGroup}>
               <div 
-                style={{ ...styles.mobileNavItem, ...(hoveredMobileItem === 'participe' ? styles.mobileNavItemHover : {}) }} 
+                className={`${styles.mobileNavItem} ${hoveredMobileItem === 'participe' ? styles.mobileNavItemHover : ''}`} 
                 onClick={() => toggleAccordion('participe')}
                 onMouseEnter={() => setHoveredMobileItem('participe')}
                 onMouseLeave={() => setHoveredMobileItem(null)}
               >
                 <span>Participe</span>
-                <span style={styles.accordionIcon}>{openAccordion === 'participe' ? '▲' : '▼'}</span>
+                <span className={styles.accordionIcon}>{openAccordion === 'participe' ? '▲' : '▼'}</span>
               </div>
               {openAccordion === 'participe' && (
-                <div style={styles.mobileSubList}>
+                <div className={styles.mobileSubList}>
                   <div 
-                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-doacoes' ? styles.mobileSubItemHover : {}) }}
+                    className={`${styles.mobileSubItem} ${hoveredMobileItem === 'sub-doacoes' ? styles.mobileSubItemHover : ''}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                     onMouseEnter={() => setHoveredMobileItem('sub-doacoes')}
                     onMouseLeave={() => setHoveredMobileItem(null)}
                   >
-                    <Link href="/doacoes" style={styles.linkText}>Doações</Link>
+                    <Link href="/doacoes" className={styles.linkText}>Doações</Link>
                   </div>
                   <div 
-                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-inv-part' ? styles.mobileSubItemHover : {}) }}
+                    className={`${styles.mobileSubItem} ${hoveredMobileItem === 'sub-inv-part' ? styles.mobileSubItemHover : ''}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                     onMouseEnter={() => setHoveredMobileItem('sub-inv-part')}
                     onMouseLeave={() => setHoveredMobileItem(null)}
                   >
-                    <Link href="/inventario-participativo" style={styles.linkText}>Inventário Participativo</Link>
+                    <Link href="/inventario-participativo" className={styles.linkText}>Inventário Participativo</Link>
                   </div>
                   <div 
-                    style={{ ...styles.mobileSubItem, ...(hoveredMobileItem === 'sub-trocas' ? styles.mobileSubItemHover : {}) }}
+                    className={`${styles.mobileSubItem} ${hoveredMobileItem === 'sub-trocas' ? styles.mobileSubItemHover : ''}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                     onMouseEnter={() => setHoveredMobileItem('sub-trocas')}
                     onMouseLeave={() => setHoveredMobileItem(null)}
                   >
-                    <Link href="/trocas" style={styles.linkText}>Trocas</Link>
+                    <Link href="/trocas" className={styles.linkText}>Trocas</Link>
                   </div>
                 </div>
               )}

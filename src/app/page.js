@@ -5,7 +5,7 @@ import NavbarACAJU from "../components/Navbar";
 export default function Home() {
   return (
     <div style={styles.page}>
-      {/* <NavbarACAJU /> */}
+       <NavbarACAJU />
       
       <main style={styles.mainContent}>
 
