@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import CardGlobal from '@/components/CardGlobal'; 
 
 const styles = {
   container: {
@@ -153,9 +154,53 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     alignSelf: "flex-start",
+    marginTop: "20px",
     transition: "background-color 0.2s",
   }
 };
+
+const dadosPlantiosRecentes = [
+  {
+    id: 1,
+    image: "/images/plantio-1.jpg", 
+    badge: "Ação recente",
+    title: "Plantio comunitário no Porto Novo",
+    description: "Moradores e coletivos parceiros se reuniram para plantar espécies nativas e fortalecer a recuperação das margens do Rio Juqueriquerê.",
+    buttonText: "Leia mais →"
+  },
+  {
+    id: 2,
+    image: "/images/plantio-2.jpg", 
+    badge: "Ação recente",
+    title: "Reforço da vegetação de restinga",
+    description: "O mutirão reuniu voluntários no plantio de mudas adaptadas ao ambiente costeiro, apoiando a proteção do solo e da biodiversidade.",
+    buttonText: "Leia mais →"
+  },
+  {
+    id: 3,
+    image: "/images/plantio-3.jpg", 
+    badge: "Ação recente",
+    title: "Cuidado do solo com adubação verde",
+    description: "A ação combinou o plantio de espécies nativas com o uso de feijão-guandu para enriquecer, proteger e descompactar o solo.",
+    buttonText: "Leia mais →"
+  },
+  {
+    id: 4,
+    image: "/images/plantio-4.jpg", 
+    badge: "Ação recente",
+    title: "Mobilização de parceiros do território",
+    description: "Coletivos socioambientais caminharam juntos pelo território para reconhecer áreas prioritárias e organizar novas frentes de plantio.",
+    buttonText: "Leia mais →"
+  },
+  {
+    id: 5,
+    image: "/images/plantio-5.jpg", 
+    badge: "Ação recente",
+    title: "Acompanhamento das mudas plantadas",
+    description: "A comunidade retornou às áreas restauradas para acompanhar o desenvolvimento das mudas e reforçar os cuidados necessários.",
+    buttonText: "Leia mais →"
+  }
+];
 
 export default function MutiraoPlantio() {
   return (
@@ -245,6 +290,11 @@ export default function MutiraoPlantio() {
             </p>
           </div>
         </div>
+
+        <CardGlobal 
+          titulo="Plantios realizados recentemente" 
+          dadosCards={dadosPlantiosRecentes} 
+        />
 
         <a href="/mutirao/limpeza" style={styles.buttonLink}>
           Ver também: Mutirão de Limpeza →
