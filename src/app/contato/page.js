@@ -2,11 +2,12 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import NavbarACAJU from '@components/NavbarACAJU';
-import Footer from '@components/Footer';
+
+import NavbarACAJU from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 
-const Mapa = dynamic(() => import('@components/Mapa'), { 
+const Mapa = dynamic(() => import('@/components/Mapa'), { 
   ssr: false,
   loading: () => <div style={styles.mapLoading}>Carregando mapa...</div>
 });

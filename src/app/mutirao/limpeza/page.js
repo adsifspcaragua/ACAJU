@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import CardGlobal from '@/components/CardGlobal';
 
 const styles = {
   container: {
@@ -152,6 +153,50 @@ const styles = {
   }
 };
 
+// Dados para preencher o carrossel na página de Limpeza
+const dadosMutirao = [
+  {
+    id: 1,
+    image: 'https://placehold.co/600x400/eeeeee/333333?text=Praia+da+Foz', // Atualize com o caminho da imagem real
+    title: 'Limpeza comunitária na praia da foz',
+    description: 'Voluntários e famílias caiçaras se reuniram para recolher resíduos e cuidar do encontro entre o Rio Juqueriquerê e o mar.',
+    badge: 'Ação recente',
+    buttonText: 'Leia mais →'
+  },
+  {
+    id: 2,
+    image: 'https://placehold.co/600x400/eeeeee/333333?text=Margens+Rio',
+    title: 'Cuidado das margens do Juqueriquerê',
+    description: 'A comunidade percorreu as margens do rio para retirar materiais descartados e fortalecer a conscientização ambiental no território.',
+    badge: 'Ação recente',
+    buttonText: 'Leia mais →'
+  },
+  {
+    id: 3,
+    image: 'https://placehold.co/600x400/eeeeee/333333?text=Porto+Novo',
+    title: 'Mobilização no bairro Porto Novo',
+    description: 'Moradores e coletivos parceiros participaram de uma ação conjunta de limpeza e cuidado dos espaços de convivência da comunidade.',
+    badge: 'Ação recente',
+    buttonText: 'Leia mais →'
+  },
+  {
+    id: 4,
+    image: 'https://placehold.co/600x400/eeeeee/333333?text=Coleta',
+    title: 'Coleta e triagem de resíduos',
+    description: 'O mutirão promoveu a separação dos materiais recolhidos e o diálogo sobre consumo responsável, descarte correto e reciclagem.',
+    badge: 'Ação recente',
+    buttonText: 'Leia mais →'
+  },
+  {
+    id: 5,
+    image: 'https://placehold.co/600x400/eeeeee/333333?text=Oceano',
+    title: 'Ação conjunta pelo oceano',
+    description: 'A mobilização conectou o cuidado da praia, do mangue e do rio em defesa dos ecossistemas costeiros e dos bens comuns caiçaras.',
+    badge: 'Ação recente',
+    buttonText: 'Leia mais →'
+  }
+];
+
 export default function MutiraoLimpeza() {
   return (
     <div style={styles.container}>
@@ -222,6 +267,12 @@ export default function MutiraoLimpeza() {
             públicas de salvaguardo dos ecossistemas costeiros."
           </p>
         </div>
+
+        {/* CHAMADA DO COMPONENTE GLOBAL AQUI */}
+        <CardGlobal 
+          titulo="Mutirões de limpeza realizados recentemente" 
+          dadosCards={dadosMutirao} 
+        />
 
         <div style={styles.referenceBox}>
           <div style={styles.referenceTitle}>Referências</div>
