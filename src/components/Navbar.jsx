@@ -162,7 +162,7 @@ export default function NavbarACAJU() {
                 onMouseEnter={() => handleMouseEnter('memorias')}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/memoriasCaicara" className={styles.linkText}>
+                <Link href="/memoriasCaicaras" className={styles.linkText}>
                   <span className={styles.navItem}>Memórias Caiçaras</span>
                 </Link>
               </li>
