@@ -153,11 +153,11 @@ const styles = {
   }
 };
 
-// Dados para preencher o carrossel na página de Limpeza
+
 const dadosMutirao = [
   {
     id: 1,
-    image: 'https://placehold.co/600x400/eeeeee/333333?text=Praia+da+Foz', // Atualize com o caminho da imagem real
+    image: '/imagens/plantio.jpeg', 
     title: 'Limpeza comunitária na praia da foz',
     description: 'Voluntários e famílias caiçaras se reuniram para recolher resíduos e cuidar do encontro entre o Rio Juqueriquerê e o mar.',
     badge: 'Ação recente',

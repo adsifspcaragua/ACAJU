@@ -52,7 +52,7 @@ const styles = {
     gap: '20px',
   },
   card: {
-    minWidth: 'calc(33.333% - 14px)', // 3 cards por vez em ecrãs grandes
+    minWidth: 'calc(33.333% - 14px)', 
     backgroundColor: '#ffffff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
@@ -71,7 +71,7 @@ const styles = {
   cardImage: {
     width: '100%',
     height: '100%',
-    objectFit: 'contain', // A imagem não será cortada
+    objectFit: 'contain', 
     display: 'block',
   },
   badge: {

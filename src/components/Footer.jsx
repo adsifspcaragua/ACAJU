@@ -29,9 +29,9 @@ export default function Footer() {
           <div style={styles.section}>
             <h4 style={styles.columnTitle}>INSTITUCIONAL</h4>
             <ul style={styles.linkList}>
-              <li><Link href="/quem-somos" style={styles.link}>Quem Somos</Link></li>
+              <li><Link href="/sobreNos" style={styles.link}>Quem Somos</Link></li>
               <li><Link href="/projetos" style={styles.link}>Projetos</Link></li>
-              <li><Link href="/mini-museu" style={styles.link}>Mini-Museu</Link></li>
+              <li><Link href="/miniMuseu/casa-caicara" style={styles.link}>Mini-Museu</Link></li>
               <li><Link href="/noticias" style={styles.link}>Notícias</Link></li>
               <li><Link href="/institucional" style={styles.link}>Institucional</Link></li>
             </ul>
@@ -40,11 +40,11 @@ export default function Footer() {
           <div style={styles.section}>
             <h4 style={styles.columnTitle}>PARTICIPE</h4>
             <ul style={styles.linkList}>
-              <li><Link href="/doacoes" style={styles.link}>Doações</Link></li>
-              <li><Link href="/inventario-participativo" style={styles.link}>Inventário Participativo</Link></li>
-              <li><Link href="/trocas" style={styles.link}>Trocas</Link></li>
-              <li><Link href="/mutirao-limpeza" style={styles.link}>Mutirão de Limpeza</Link></li>
-              <li><Link href="/mutirao-plantio" style={styles.link}>Mutirão de Plantio</Link></li>
+              <li><Link href="/participe" style={styles.link}>Doações</Link></li>
+              <li><Link href="/participe" style={styles.link}>Inventário Participativo</Link></li>
+              <li><Link href="/participe" style={styles.link}>Trocas</Link></li>
+              <li><Link href="/mutirao/limpeza" style={styles.link}>Mutirão de Limpeza</Link></li>
+              <li><Link href="/mutirao/plantio" style={styles.link}>Mutirão de Plantio</Link></li>
             </ul>
           </div>
 
@@ -55,8 +55,8 @@ export default function Footer() {
               Porto Novo — Caraguatatuba, SP
             </address>
             <div style={styles.contactLinks}>
-              <Link href="/fale-conosco" style={styles.darkLink}>Fale Conosco →</Link>
-              <Link href="/canal-denuncias" style={styles.darkLink}>Canal de Denúncias →</Link>
+              <Link href="/contato" style={styles.darkLink}>Fale Conosco →</Link>
+              <Link href="/faleConosco/canalDeDenuncias" style={styles.darkLink}>Canal de Denúncias →</Link>
             </div>
           </div>
 
