@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CardGlobal from '@/components/CardGlobal';
+import Carrossel from '@/components/Carrossel'; // <-- Importação do Carrossel adicionada
 
 const styles = {
   container: {
@@ -15,30 +16,6 @@ const styles = {
     color: "#333333",
   },
   
-  secaoDestaque: {
-    backgroundColor: "#8C1717", 
-    color: "#ffffff",
-    textAlign: "center",
-    padding: "120px 20px",
-  },
-
-  subtituloDestaque: {
-    fontSize: "12px",
-    fontWeight: "600",
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-    color: "rgba(255, 255, 255, 0.8)",
-    marginBottom: "15px",
-    marginTop: "5%"
-  },
-  
-  tituloDestaque: {
-    fontSize: "48px",
-    fontWeight: "bold",
-    margin: 0,
-    letterSpacing: "-0.5px",
-  },
-
   mainContent: {
     flexGrow: 1,
     width: "100%",
@@ -153,7 +130,6 @@ const styles = {
   }
 };
 
-
 const dadosMutirao = [
   {
     id: 1,
@@ -198,14 +174,19 @@ const dadosMutirao = [
 ];
 
 export default function MutiraoLimpeza() {
+
+  const imagensBanner = [
+     "/carrossel/limpeza1.jpeg", 
+  ];
   return (
     <div style={styles.container}>
       <Navbar />
 
-      <section style={styles.secaoDestaque}>
-        <div style={styles.subtituloDestaque}>AÇÃO COLETIVA</div>
-        <h1 style={styles.tituloDestaque}>Mutirão de Limpeza</h1>
-      </section>
+     
+      <Carrossel 
+        title="Mutirão de Limpeza" 
+        images={imagensBanner} 
+      />
 
       <main style={styles.mainContent}>
         
@@ -268,7 +249,6 @@ export default function MutiraoLimpeza() {
           </p>
         </div>
 
-        {/* CHAMADA DO COMPONENTE GLOBAL AQUI */}
         <CardGlobal 
           titulo="Mutirões de limpeza realizados recentemente" 
           dadosCards={dadosMutirao} 

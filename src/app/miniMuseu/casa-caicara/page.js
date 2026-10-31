@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Carrossel from '@/components/Carrossel';
 
 const styles = {
   container: {
@@ -14,30 +15,6 @@ const styles = {
     color: "#333333",
   },
   
-  secaoDestaque: {
-    backgroundColor: "#8C1717", 
-    color: "#ffffff",
-    textAlign: "center",
-    padding: "120px 20px",
-  },
-
-  subtituloDestaque: {
-    fontSize: "12px",
-    fontWeight: "600",
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-    color: "rgba(255, 255, 255, 0.8)",
-    marginBottom: "15px",
-    marginTop: "5%"
-  },
-  
-  tituloDestaque: {
-    fontSize: "48px",
-    fontWeight: "bold",
-    margin: 0,
-    letterSpacing: "-0.5px",
-  },
-
   mainContent: {
     flexGrow: 1,
     width: "100%",
@@ -47,15 +24,6 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     boxSizing: "border-box",
-  },
-  
-  imagemDestaque: {
-    width: "100%",
-    height: "400px",
-    objectFit: "cover",
-    borderRadius: "12px",
-    marginBottom: "20px",
-    display: "block",
   },
 
   paragraph: {
@@ -133,24 +101,24 @@ const styles = {
 };
 
 export default function CasaCaicara() {
+
+  const imagensBanner = [
+     "/carrossel/casaCaiçara1.jpeg", 
+    "/carrossel/casaCaiçara2.jpeg"  
+  ];
+
   return (
     <div style={styles.container}>
 
       <Navbar />
 
-      <section style={styles.secaoDestaque}>
-        <div style={styles.subtituloDestaque}>PATRIMÔNIO CAIÇARA</div>
-        <h1 style={styles.tituloDestaque}>Casa Caiçara Mini Museu</h1>
-      </section>
+      <Carrossel 
+        title="Casa Caiçara Mini Museu" 
+        images={imagensBanner} 
+      />
 
       <main style={styles.mainContent}>
         
-        <img 
-          src="/image_402602.jpg" 
-          alt="Mangue e natureza caiçara" 
-          style={styles.imagemDestaque} 
-        />
-
         <p style={styles.paragraph}>
           A <strong style={styles.boldHighlight}>Casa Caiçara Mini Museu</strong> é um dos projetos da ACAJU com objetivo de salvaguardar as
           narrativas históricas e antropológicas da comunidade do Porto Novo e do modo de vida

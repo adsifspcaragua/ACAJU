@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CardGlobal from '@/components/CardGlobal'; 
+import Carrossel from '@/components/Carrossel'; // <-- Importação do Carrossel
 
 const styles = {
   container: {
@@ -15,30 +16,6 @@ const styles = {
     color: "#333333",
   },
   
-  secaoDestaque: {
-    backgroundColor: "#8C1717", 
-    color: "#ffffff",
-    textAlign: "center",
-    padding: "120px 20px",
-  },
-
-  subtituloDestaque: {
-    fontSize: "12px",
-    fontWeight: "600",
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-    color: "rgba(255, 255, 255, 0.8)",
-    marginBottom: "15px",
-    marginTop: "5%"
-  },
-  
-  tituloDestaque: {
-    fontSize: "48px",
-    fontWeight: "bold",
-    margin: 0,
-    letterSpacing: "-0.5px",
-  },
-
   mainContent: {
     flexGrow: 1,
     width: "100%",
@@ -48,22 +25,6 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     boxSizing: "border-box",
-  },
-
-  bannerImageContainer: {
-    width: "100%",
-    marginBottom: "40px",
-    borderRadius: "12px",
-    overflow: "hidden",
-    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-  },
-
-  bannerImage: {
-    width: "100%",
-    height: "auto",
-    display: "block",
-    objectFit: "cover",
-    maxHeight: "400px",
   },
 
   paragraph: {
@@ -203,26 +164,23 @@ const dadosPlantiosRecentes = [
 ];
 
 export default function MutiraoPlantio() {
+  
+  const imagensBanner = [
+    "/carrossel/plantio1.jpeg",
+    "/carrossel/plantio2.jpeg"
+  ];
+
   return (
     <div style={styles.container}>
       <Navbar />
 
-      <section style={styles.secaoDestaque}>
-        <div style={styles.subtituloDestaque}>RESTAURAÇÃO AMBIENTAL</div>
-        <h1 style={styles.tituloDestaque}>Mutirão de Plantio</h1>
-      </section>
+      <Carrossel 
+        title="Mutirão de Plantio" 
+        images={imagensBanner} 
+      />
 
       <main style={styles.mainContent}>
         
-        {/* Substitua o src abaixo pelo caminho correto da sua imagem no Next.js (ex: /images/plantio-banner.jpg) */}
-        <div style={styles.bannerImageContainer}>
-          <img 
-            src="/plantio-banner.jpg" 
-            alt="Mãos segurando uma muda com terra" 
-            style={styles.bannerImage} 
-          />
-        </div>
-
         <p style={styles.paragraph}>
           Recentemente, foi retomada a ação de plantio de mudas de espécies nativas, a partir do{' '}
           <strong style={styles.boldHighlight}>projeto Juqueriquerê Vivo da ACAJU</strong>. Para tanto, 
