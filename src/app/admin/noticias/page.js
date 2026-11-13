@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import GaleriaUpload from "@/components/GaleriaUpload";
 import CapaUpload from "@/components/CapaUpload";
@@ -23,11 +23,13 @@ export default function PublicarNoticia() {
   }, []);
 
   // Intercepta a submissão para anexar os arquivos de fotos adicionais
-  const handleSubmitWithFiles = (formData) => {
+  const handleSubmitWithFiles = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     galeriaFotos.forEach((file) => {
       formData.append('galleryImages', file);
     });
-    formAction(formData);
+    startTransition(() => formAction(formData));
   };
 
   return (
@@ -42,7 +44,7 @@ export default function PublicarNoticia() {
           </div>
         </div>
 
-        <form style={styles.card} action={handleSubmitWithFiles}>
+        <form style={styles.card} onSubmit={handleSubmitWithFiles}>
 
           <FormFeedback state={state} />
 

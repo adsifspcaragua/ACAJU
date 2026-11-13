@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { FiX } from "react-icons/fi";
 import { updateAdminPublicationAction } from '@/actions/admActions';
 import FormFeedback from '@/components/FormFeedback';
@@ -47,11 +47,37 @@ const galleryCategories = ['Notícia', 'Projeto', 'Memória Caiçara'];
 export default function EditPublicationModal({ publication, onClose, onUpdated }) {
   const [isPending, startTransition] = useTransition();
   const [feedback, setFeedback] = useState(null);
+  const [selectedGalleryFiles, setSelectedGalleryFiles] = useState([]);
+  const [selectedCoverFile, setSelectedCoverFile] = useState(null);
+  const [selectedDocumentFile, setSelectedDocumentFile] = useState(null);
+  const [fieldValues, setFieldValues] = useState(() => publication?.fields ?? {});
+
+  useEffect(() => {
+    setFieldValues(publication?.fields ?? {});
+    setSelectedGalleryFiles([]);
+    setSelectedCoverFile(null);
+    setSelectedDocumentFile(null);
+  }, [publication]);
 
   if (!publication) return null;
 
   const handleSave = (formData) => {
     setFeedback(null);
+    const currentGalleryFiles = formData.getAll('galleryImages');
+    const hasCurrentGalleryFile = currentGalleryFiles.some((file) => file?.size > 0);
+    if (selectedGalleryFiles.length > 0 && !hasCurrentGalleryFile) {
+      selectedGalleryFiles.forEach((file) => {
+        formData.append('galleryImages', file);
+      });
+    }
+    const currentCoverFile = formData.get('coverImage');
+    const currentDocumentFile = formData.get('file');
+    if (selectedCoverFile && (!currentCoverFile || currentCoverFile.size === 0)) {
+      formData.set('coverImage', selectedCoverFile);
+    }
+    if (selectedDocumentFile && (!currentDocumentFile || currentDocumentFile.size === 0)) {
+      formData.set('file', selectedDocumentFile);
+    }
     startTransition(async () => {
       const result = await updateAdminPublicationAction(null, formData);
       if (!result.success) {
@@ -88,7 +114,8 @@ export default function EditPublicationModal({ publication, onClose, onUpdated }
               <select
                 id={`publication-${field.name}`}
                 name={field.name}
-                defaultValue={publication.fields?.[field.name] ?? ''}
+                value={fieldValues[field.name] ?? ''}
+                onChange={(event) => setFieldValues((current) => ({ ...current, [field.name]: event.target.value }))}
                 required={field.required !== false}
                 style={styles.input}
               >
@@ -98,7 +125,8 @@ export default function EditPublicationModal({ publication, onClose, onUpdated }
               <textarea
                 id={`publication-${field.name}`}
                 name={field.name}
-                defaultValue={publication.fields?.[field.name] ?? ''}
+                value={fieldValues[field.name] ?? ''}
+                onChange={(event) => setFieldValues((current) => ({ ...current, [field.name]: event.target.value }))}
                 required={field.required !== false}
                 minLength={field.minLength}
                 rows={field.name === 'description' ? 4 : 6}
@@ -109,7 +137,8 @@ export default function EditPublicationModal({ publication, onClose, onUpdated }
                 id={`publication-${field.name}`}
                 name={field.name}
                 type={field.type ?? 'text'}
-                defaultValue={publication.fields?.[field.name] ?? ''}
+                value={fieldValues[field.name] ?? ''}
+                onChange={(event) => setFieldValues((current) => ({ ...current, [field.name]: event.target.value }))}
                 required={field.required !== false}
                 minLength={field.minLength ?? (field.type ? undefined : 3)}
                 maxLength={field.maxLength}
@@ -139,6 +168,7 @@ export default function EditPublicationModal({ publication, onClose, onUpdated }
               type="file"
               name="coverImage"
               accept="image/*"
+              onChange={(event) => setSelectedCoverFile(event.target.files?.[0] ?? null)}
               style={styles.fileInput}
             />
           </div>
@@ -162,8 +192,15 @@ export default function EditPublicationModal({ publication, onClose, onUpdated }
               name="galleryImages"
               accept="image/*"
               multiple
+              onChange={(event) => setSelectedGalleryFiles(Array.from(event.target.files ?? []))}
               style={styles.fileInput}
             />
+            {selectedGalleryFiles.length > 0 && (
+              <output style={styles.selectedFiles}>
+                {selectedGalleryFiles.length} imagem(ns) selecionada(s):{' '}
+                {selectedGalleryFiles.map((file) => file.name).join(', ')}
+              </output>
+            )}
             <span style={styles.helpText}>Selecionar arquivos substitui a galeria atual. Deixe vazio para mantê-la.</span>
           </div>
         )}
@@ -181,6 +218,7 @@ export default function EditPublicationModal({ publication, onClose, onUpdated }
               type="file"
               name="file"
               accept=".pdf,application/pdf"
+              onChange={(event) => setSelectedDocumentFile(event.target.files?.[0] ?? null)}
               style={styles.fileInput}
             />
           </div>
@@ -291,6 +329,11 @@ const styles = {
     borderRadius: "4px",
   },
   helpText: { color: "#64748b", fontSize: "12px" },
+  selectedFiles: {
+    color: "#075e4d",
+    fontSize: "12px",
+    lineHeight: 1.4,
+  },
   footer: { display: "flex", justifyContent: "flex-end", gap: "10px" },
   cancelButton: {
     minHeight: "40px",

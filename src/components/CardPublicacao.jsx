@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 
 export default function CardPublicacao({ item, basePath = "/noticias" }) {
@@ -32,17 +31,6 @@ export default function CardPublicacao({ item, basePath = "/noticias" }) {
         </Link>
       </div>
 
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .card-publicacao {
-            flex-direction: column !important;
-          }
-          .card-publicacao > div:first-child {
-            width: 100% !important;
-            height: 220px !important;
-          }
-        }
-      `}</style>
     </article>
   );
 }

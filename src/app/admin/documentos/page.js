@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import '@/app/admin/page.admin.css';
 import { postDocumentAction } from '@/actions/admActions';
@@ -8,6 +8,11 @@ import FormFeedback from '@/components/FormFeedback';
 
 export default function RepositorioDocumentos() {
   const [state, formAction, isPending] = useActionState(postDocumentAction, null);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    startTransition(() => formAction(new FormData(event.currentTarget)));
+  };
 
   return (
     <div style={styles.container}>
@@ -22,7 +27,7 @@ export default function RepositorioDocumentos() {
           </div>
         </div>
 
-        <form style={styles.card} action={formAction}>
+        <form style={styles.card} onSubmit={handleSubmit}>
           <FormFeedback state={state} />
           
           <div style={styles.inputGroupFull}>

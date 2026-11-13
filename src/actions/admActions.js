@@ -190,7 +190,7 @@ export async function updateAdminPublicationAction(_prevState, formData) {
         }
 
         const updated = await updateAdminPublication({ id, category, fields: validation.data, media });
-        await logAdminAction(currentAdminId, `EDITOU ${category} ${id}`.slice(0, 191));
+        const auditLog = await logAdminAction(currentAdminId, `EDITOU ${category} ${id}`.slice(0, 191));
         revalidatePath('/admin/gerenciarPublicacoes');
         const updatedTitle = validation.data.title ?? validation.data.name;
         return {
@@ -202,6 +202,8 @@ export async function updateAdminPublicationAction(_prevState, formData) {
                 fields: validation.data,
                 content: validation.data.content ?? validation.data.bodyContent ?? validation.data.description ?? '',
                 media,
+                updatedAt: auditLog?.loginAt?.toISOString() ?? new Date().toISOString(),
+                updatedByName: auditLog?.ADM?.name ?? 'Administrador atual',
             },
         };
     } catch (error) {

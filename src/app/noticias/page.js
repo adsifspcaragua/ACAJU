@@ -1,17 +1,20 @@
 import Footer from "@/components/Footer";
 import NavbarACAJU from "@/components/Navbar";
 import CardPublicacao from "@/components/CardPublicacao";
+import { getAllNoticias } from "@/services/admServies";
 
-export default function NoticiasPage() {
+export default async function NoticiasPage() {
 
-  const noticias = [
-    {
-      id: "1",
-      title: "ACAJU realiza mutirão de limpeza no Dia Internacional dos Oceanos",
-      content: "A comunidade caiçara do Porto Novo se reuniu para recolher resíduos das margens do Rio Juqueriquerê...",
-      coverImage: "",
-    },
-  ];
+  const noticias = await getAllNoticias();
+
+  // const noticias = [
+  //   {
+  //     id: "1",
+  //     title: "ACAJU realiza mutirão de limpeza no Dia Internacional dos Oceanos",
+  //     content: "A comunidade caiçara do Porto Novo se reuniu para recolher resíduos das margens do Rio Juqueriquerê...",
+  //     coverImage: "",
+  //   },
+  // ];
 
   const LIMITE_POR_PAGINA = 6;
 
@@ -26,7 +29,7 @@ export default function NoticiasPage() {
 
         {noticias.length > LIMITE_POR_PAGINA && (
           <div style={styles.paginationContainer}>
-            <button style={styles.btnProximaPagina}>
+            <button type="button" style={styles.btnProximaPagina}>
               Próxima página &rarr;
             </button>
           </div>

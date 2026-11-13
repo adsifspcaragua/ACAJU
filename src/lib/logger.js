@@ -9,7 +9,7 @@ export async function logAdminAction(adminId, action) {
     const ipAddress = headerList.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
     const userAgent = headerList.get('user-agent') || 'Desconhecido';
 
-    await createAdminLog({
+    return await createAdminLog({
       adminId,
       action,
       ipAddress,

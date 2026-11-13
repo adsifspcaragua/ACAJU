@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import SideBarAdmin from "@/components/SideBarAdmin";
 import EditPublicationModal from "@/components/EditPublicationModal";
-import { deleteAdminPublicationAction } from '@/actions/admActions';
+import DeletePublicationDialog from "@/components/DeletePublicationDialog";
 import { FiEdit, FiFilter, FiTrash2 } from "react-icons/fi";
 import { getBadgeStyle, styles } from "./GerenciarPublicacoes.styles";
 import '@/app/admin/page.admin.css';
@@ -16,25 +16,15 @@ export default function GerenciarPublicacoesClient({ initialPublications, warnin
   const [publications, setPublications] = useState(initialPublications);
   const [actionError, setActionError] = useState('');
   const [editingItem, setEditingItem] = useState(null);
-  const [isDeleting, startDeleteTransition] = useTransition();
+  const [deletingItem, setDeletingItem] = useState(null);
 
   const filteredPublications = activeTab === "Todas"
     ? publications
     : publications.filter((publication) => publication.category === activeTab);
 
   const handleDelete = (publication) => {
-    if (!window.confirm(`Excluir a publicação "${publication.title}"? Esta ação não pode ser desfeita.`)) return;
-
     setActionError('');
-    startDeleteTransition(async () => {
-      const result = await deleteAdminPublicationAction(publication.category, publication.recordId);
-      if (!result.success) {
-        setActionError(result.error);
-        return;
-      }
-
-      setPublications((current) => current.filter((item) => item.id !== publication.id));
-    });
+    setDeletingItem(publication);
   };
 
   const handleUpdated = (updatedPublication) => {
@@ -46,6 +36,8 @@ export default function GerenciarPublicacoesClient({ initialPublications, warnin
             content: updatedPublication.content,
             fields: updatedPublication.fields,
             media: { ...publication.media, ...updatedPublication.media },
+            updatedAt: updatedPublication.updatedAt,
+            updatedByName: updatedPublication.updatedByName,
           }
         : publication
     )));
@@ -92,7 +84,9 @@ export default function GerenciarPublicacoesClient({ initialPublications, warnin
                 <th style={styles.th}>TÍTULO DA PUBLICAÇÃO</th>
                 <th style={styles.thCenter}>CATEGORIA</th>
                 <th style={styles.thCenter}>AUTOR</th>
-                <th style={styles.thCenter}>DATA</th>
+                <th style={styles.thCenter}>CRIADA EM</th>
+                <th style={styles.thCenter}>ALTERADA EM</th>
+                <th style={styles.thCenter}>ALTERADO POR</th>
                 <th style={styles.thCenter}>AÇÕES</th>
               </tr>
             </thead>
@@ -107,6 +101,10 @@ export default function GerenciarPublicacoesClient({ initialPublications, warnin
                   </td>
                   <td style={styles.tdCenterText}>{publication.author}</td>
                   <td style={styles.tdCenterText}>{dateFormatter.format(new Date(publication.createdAt))}</td>
+                  <td style={styles.tdCenterText}>
+                    {publication.updatedAt ? dateFormatter.format(new Date(publication.updatedAt)) : 'Ainda não alterada'}
+                  </td>
+                  <td style={styles.tdCenterText}>{publication.updatedByName ?? '-'}</td>
                   <td style={styles.tdCenter}>
                     <div style={styles.actionGroup}>
                       <button
@@ -123,7 +121,6 @@ export default function GerenciarPublicacoesClient({ initialPublications, warnin
                         aria-label={`Excluir ${publication.title}`}
                         title="Excluir publicação"
                         style={styles.actionBtnDelete}
-                        disabled={isDeleting}
                         onClick={() => handleDelete(publication)}
                       >
                         <FiTrash2 size={16} />
@@ -134,7 +131,7 @@ export default function GerenciarPublicacoesClient({ initialPublications, warnin
               ))}
               {filteredPublications.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={styles.emptyCell}>Nenhuma publicação encontrada.</td>
+                  <td colSpan={7} style={styles.emptyCell}>Nenhuma publicação encontrada.</td>
                 </tr>
               )}
             </tbody>
@@ -146,6 +143,15 @@ export default function GerenciarPublicacoesClient({ initialPublications, warnin
         publication={editingItem}
         onClose={() => setEditingItem(null)}
         onUpdated={handleUpdated}
+      />
+      <DeletePublicationDialog
+        publication={deletingItem}
+        onClose={() => setDeletingItem(null)}
+        onError={setActionError}
+        onDeleted={(id) => {
+          setPublications((current) => current.filter((item) => item.id !== id));
+          setDeletingItem(null);
+        }}
       />
     </div>
   );

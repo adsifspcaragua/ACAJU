@@ -4,6 +4,7 @@ import { startTransition, useCallback, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import CardPendencia from "../../../components/CardPendencia";
 import ModalAnalisePublicacao from "../../../components/ModalAnalisePublicacao";
+import EditPublicationModal from "@/components/EditPublicationModal";
 import { getAdminPendingPublicationsAction } from '@/actions/admActions';
 import '@/app/admin/page.admin.css';
 
@@ -13,6 +14,7 @@ export default function Pendencias() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
+  const [editingItem, setEditingItem] = useState(null);
 
   useEffect(() => {
     let isActive = true;
@@ -49,6 +51,43 @@ export default function Pendencias() {
     setPendencias((current) => current.filter((item) => item.id !== id));
   }, []);
 
+  const handleEdit = useCallback((item) => {
+    setIsModalOpen(false);
+    setItemSelecionado(null);
+    setEditingItem({
+      id: item.id,
+      recordId: item.recordId,
+      category: item.category,
+      title: item.titulo,
+      content: item.conteudo,
+      fields: item.category === 'Notícia'
+        ? { title: item.titulo, content: item.conteudo, videoUrl: item.videoUrl ?? '' }
+        : { title: item.titulo, coordinator: item.coordenador ?? '', objective: item.objetivo ?? '', bodyContent: item.conteudo, videoUrl: item.videoUrl ?? '' },
+      media: {
+        coverImage: item.imagemCapa,
+        galleryImages: item.galeria ?? [],
+      },
+    });
+  }, []);
+
+  const handleUpdated = useCallback((updatedPublication) => {
+    setPendencias((current) => current.map((item) => (
+      item.id === updatedPublication.id
+        ? {
+            ...item,
+            titulo: updatedPublication.title,
+            conteudo: updatedPublication.content,
+            coordenador: updatedPublication.fields?.coordinator ?? item.coordenador,
+            objetivo: updatedPublication.fields?.objective ?? item.objetivo,
+            videoUrl: updatedPublication.fields?.videoUrl ?? item.videoUrl,
+            imagemCapa: updatedPublication.media?.coverImage ?? item.imagemCapa,
+            galeria: updatedPublication.media?.galleryImages ?? item.galeria,
+          }
+        : item
+    )));
+    setEditingItem(null);
+  }, []);
+
   return (
     <div style={styles.container}>
       <SideBarAdmin />
@@ -82,7 +121,13 @@ export default function Pendencias() {
           isOpen={isModalOpen}
           onClose={handleFecharAnalise}
           onReviewed={handleReviewed}
+          onEdit={handleEdit}
           item={itemSelecionado}
+        />
+        <EditPublicationModal
+          publication={editingItem}
+          onClose={() => setEditingItem(null)}
+          onUpdated={handleUpdated}
         />
       </main>
     </div>

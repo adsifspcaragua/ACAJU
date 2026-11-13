@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import GaleriaUpload from "@/components/GaleriaUpload"; 
 import CapaUpload from "@/components/CapaUpload";
@@ -18,11 +18,13 @@ export default function GerenciarProjetos() {
     setIsMounted(true);
   }, []);
 
-  const handleSubmitWithFiles = (formData) => {
+  const handleSubmitWithFiles = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     galeriaFotos.forEach((file) => {
       formData.append('galleryImages', file);
     });
-    formAction(formData);
+    startTransition(() => formAction(formData));
   };
 
   return (
@@ -37,7 +39,7 @@ export default function GerenciarProjetos() {
           </div>
         </div>
 
-        <form style={styles.card} action={handleSubmitWithFiles}>
+        <form style={styles.card} onSubmit={handleSubmitWithFiles}>
           <FormFeedback state={state} />
 
           <div style={styles.inputGroupFull}>

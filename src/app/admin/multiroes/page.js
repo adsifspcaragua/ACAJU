@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import '@/app/admin/page.admin.css';
 import CapaUpload from "@/components/CapaUpload";
@@ -18,6 +18,11 @@ export default function GerenciarMultiroes() {
     setIsMounted(true);
   }, []);
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    startTransition(() => formAction(new FormData(event.currentTarget)));
+  };
+
   return (
     <div style={styles.container}>
       <SideBarAdmin />
@@ -31,7 +36,7 @@ export default function GerenciarMultiroes() {
           </div>
         </div>
 
-        <form style={styles.card} action={formAction}>
+        <form style={styles.card} onSubmit={handleSubmit}>
           <FormFeedback state={state} />
 
           <div style={styles.inputGroupFull}>

@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { reviewAdminPublicationAction } from '@/actions/admActions';
 import FormFeedback from '@/components/FormFeedback';
 
-export default function ModalAnalisePublicacao({ isOpen, onClose, onReviewed, item }) {
+export default function ModalAnalisePublicacao({ isOpen, onClose, onReviewed, onEdit, item }) {
   const [mostrarRejeicao, setMostrarRejeicao] = useState(false);
   const [reviewState, reviewAction, isPending] = useActionState(reviewAdminPublicationAction, null);
 
@@ -136,6 +136,14 @@ export default function ModalAnalisePublicacao({ isOpen, onClose, onReviewed, it
             </div>
           )}
           <div style={styles.buttonGroup}>
+            <button
+              type="button"
+              onClick={() => onEdit(item)}
+              disabled={isPending}
+              style={styles.btnEditar}
+            >
+              Editar publicação
+            </button>
             <button type="submit" name="decision" value="APPROVED" disabled={isPending} style={styles.btnAprovar}>
               {isPending ? 'Salvando...' : 'Aprovar'}
             </button>
@@ -350,6 +358,16 @@ const styles = {
     backgroundColor: "#058339",
     color: "white",
     padding: "12px 36px",
+    borderRadius: "6px",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: "14px",
+  },
+  btnEditar: {
+    backgroundColor: "#1d4ed8",
+    color: "white",
+    padding: "12px 24px",
     borderRadius: "6px",
     border: "none",
     cursor: "pointer",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
 import '@/app/admin/page.admin.css';
 import CapaUpload from "@/components/CapaUpload";
@@ -9,6 +9,11 @@ import { postMiniMuseuItemAction } from '@/actions/admActions';
 
 export default function MiniMuseu() {
   const [state, formAction, isPending] = useActionState(postMiniMuseuItemAction, null);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    startTransition(() => formAction(new FormData(event.currentTarget)));
+  };
 
   return (
     <div style={styles.container}>
@@ -23,7 +28,7 @@ export default function MiniMuseu() {
           </div>
         </div>
 
-        <form style={styles.card} action={formAction}>
+        <form style={styles.card} onSubmit={handleSubmit}>
           <FormFeedback state={state} />
 
           <div style={styles.inputGroupFull}>

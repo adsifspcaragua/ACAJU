@@ -27,6 +27,11 @@ export async function createAdminLog({ adminId, action, ipAddress, userAgent }) 
       ipAddress,
       userAgent,
     },
+    include: {
+      ADM: {
+        select: { name: true },
+      },
+    },
   });
 }
 

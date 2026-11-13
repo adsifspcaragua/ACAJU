@@ -5,6 +5,7 @@ export async function getAdminPublications() {
         {
             category: 'Notícia',
             query: () => prisma.news.findMany({
+                where: { status: 'APPROVED' },
                 select: { id: true, title: true, content: true, videoUrl: true, coverImage: true, images: { select: { url: true } }, createdAt: true, ADM: { select: { name: true } } },
             }),
             getTitle: (record) => record.title,
@@ -33,6 +34,7 @@ export async function getAdminPublications() {
         {
             category: 'Projeto',
             query: () => prisma.project.findMany({
+                where: { status: 'APPROVED' },
                 select: { id: true, title: true, coordinator: true, objective: true, bodyContent: true, videoUrl: true, coverImage: true, images: { select: { url: true } }, createdAt: true, ADM: { select: { name: true } } },
             }),
             getTitle: (record) => record.title,
@@ -100,9 +102,40 @@ export async function getAdminPublications() {
         }
     }));
 
+    const editLogs = await prisma.aDMLOG.findMany({
+        where: { action: { startsWith: 'EDITOU ' } },
+        orderBy: { loginAt: 'desc' },
+        select: {
+            action: true,
+            loginAt: true,
+            ADM: { select: { name: true } },
+        },
+    });
+    const latestEdits = new Map();
+    const categories = ['Notícia', 'Mutirão', 'Projeto', 'Memória Caiçara', 'Mini-Museu', 'Documentos'];
+
+    for (const log of editLogs) {
+        const category = categories.find((value) => log.action.startsWith(`EDITOU ${value} `));
+        if (!category) continue;
+        const recordId = log.action.slice(`EDITOU ${category} `.length);
+        const key = `${category}-${recordId}`;
+        if (!latestEdits.has(key)) {
+            latestEdits.set(key, {
+                updatedAt: log.loginAt.toISOString(),
+                updatedByName: log.ADM?.name ?? 'Administrador não identificado',
+            });
+        }
+    }
+
+    const publications = results.flatMap((result) => result.publications)
+        .map((publication) => ({
+            ...publication,
+            ...(latestEdits.get(publication.id) ?? { updatedAt: null, updatedByName: null }),
+        }))
+        .sort((first, second) => new Date(second.createdAt) - new Date(first.createdAt));
+
     return {
-        publications: results.flatMap((result) => result.publications)
-            .sort((first, second) => new Date(second.createdAt) - new Date(first.createdAt)),
+        publications,
         warnings: results.flatMap((result) => result.warning ? [result.warning] : []),
     };
 }
@@ -163,7 +196,12 @@ export async function reviewAdminPublication({ id, category, decision }) {
 export async function updateAdminPublication({ id, category, fields, media = {} }) {
     const dataByCategory = {
         'Notícia': fields,
-        'Mutirão': { ...fields, type: fields.type.toUpperCase(), environment: fields.environment.toUpperCase(), date: new Date(`${fields.date}T12:00:00.000Z`) },
+        'Mutirão': {
+            ...fields,
+            type: fields.type?.toUpperCase(),
+            environment: fields.environment?.toUpperCase(),
+            date: new Date(`${fields.date}T12:00:00.000Z`)
+        },
         'Projeto': fields,
         'Memória Caiçara': fields,
         'Mini-Museu': fields,
@@ -192,9 +230,9 @@ export async function updateAdminPublication({ id, category, fields, media = {} 
     if (category === 'Memória Caiçara' && media.galleryImages) {
         data.memoryImages = { deleteMany: {}, create: media.galleryImages.map((url) => ({ url })) };
     }
-        if (category === 'Mini-Museu' && media.imageUrl) {
-            data.imageUrl = media.imageUrl;
-        }
+    if (category === 'Mini-Museu' && media.imageUrl) {
+        data.imageUrl = media.imageUrl;
+    }
     if (category === 'Documentos' && media.fileUrl) data.fileUrl = media.fileUrl;
 
     return modelByCategory[category].update({ where: { id }, data });
@@ -377,5 +415,28 @@ export async function postDocumentPost({
             adminId,
         },
     });
+}
+
+export async function getAllNoticias() {
+    try {
+        const noticias = await prisma.news.findMany({
+            where: {
+                status: 'APPROVED',
+            },
+            select: {
+                id: true,
+                title: true,
+                content: true,
+                coverImage: true,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+        return noticias;
+    } catch (err) {
+        console.error("Erro ao buscar notícias:", err);
+        throw new Error("Não foi possível carregar as notícias.");
+    }
 }
 
