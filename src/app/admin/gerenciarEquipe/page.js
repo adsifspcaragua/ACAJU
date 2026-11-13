@@ -2,6 +2,8 @@
 
 import { useActionState, useEffect, useState } from "react";
 import SideBarAdmin from "../../../components/SideBarAdmin";
+import PasswordRequirements from "../../../components/PasswordRequirements";
+import { isStrongPassword } from "@/schemas/authSchema";
 import '@/app/admin/page.admin.css';
 import { getTeamMembersAction, registerAction } from '@/actions/auth';
 
@@ -19,6 +21,7 @@ export default function GestaoUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [isLoadingMembers, setIsLoadingMembers] = useState(true);
   const [membersError, setMembersError] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     let isActive = true;
@@ -121,12 +124,15 @@ export default function GestaoUsuarios() {
                   placeholder="Digite uma senha inicial..."
                   style={styles.input}
                   required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                 />
+                <PasswordRequirements password={password} />
                 {state?.errors?.pass && <span style={styles.fieldError}>{state.errors.pass[0]}</span>}
               </div>
             </div>
 
-            <button type="submit" disabled={isPending} style={styles.submitButton}>
+            <button type="submit" disabled={isPending || !isStrongPassword(password)} style={styles.submitButton}>
               {isPending ? 'Cadastrando...' : 'Cadastrar'}
             </button>
 

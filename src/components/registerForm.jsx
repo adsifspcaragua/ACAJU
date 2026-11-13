@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import PasswordRequirements from './PasswordRequirements';
+import { isStrongPassword } from '@/schemas/authSchema';
 
 export default function RegisterForm() {
 
@@ -84,9 +86,10 @@ export default function RegisterForm() {
             placeholder="Mínimo 8 caracteres"
             style={styles.input}
           />
+          <PasswordRequirements password={pass} />
         </div>
 
-        <button type="submit" style={styles.button}>Solicitar Acesso</button>
+        <button type="submit" disabled={!isStrongPassword(pass)} style={styles.button}>Solicitar Acesso</button>
       </form>
 
       <div style={styles.footer}>

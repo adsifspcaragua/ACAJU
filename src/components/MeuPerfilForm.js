@@ -6,10 +6,13 @@ import '@/app/admin/page.admin.css';
 
 import { useActionState } from 'react';
 import { updateProfileAction, changePasswordAction } from '@/actions/auth';
+import PasswordRequirements from '@/components/PasswordRequirements';
+import { isStrongPassword } from '@/schemas/authSchema';
 
 export default function GerenciarUsuario({ admin }) {
   const [state, formAction, isPending] = useActionState(updateProfileAction, null);
   const [passState, passAction, isPendingPass] = useActionState(changePasswordAction, null);
+  const [newPassword, setNewPassword] = React.useState('');
 
   const dataCadastroFormatada = admin?.createdAt
     ? new Date(admin.createdAt).toLocaleDateString('pt-BR')
@@ -41,8 +44,9 @@ export default function GerenciarUsuario({ admin }) {
 
             <div style={styles.row}>
               <div style={styles.inputGroupHalf}>
-                <label style={styles.label}>NOME COMPLETO</label>
+                <label htmlFor="profile-name" style={styles.label}>NOME COMPLETO</label>
                 <input
+                  id="profile-name"
                   type="text"
                   name="name"
                   placeholder="Ex: Ana Julia Santana"
@@ -55,8 +59,9 @@ export default function GerenciarUsuario({ admin }) {
               </div>
 
               <div style={styles.inputGroupHalf}>
-                <label style={styles.label}>E-MAIL</label>
+                <label htmlFor="profile-email" style={styles.label}>E-MAIL</label>
                 <input
+                  id="profile-email"
                   type="email"
                   name="email"
                   placeholder="Ex: admin@acaju.org"
@@ -68,8 +73,9 @@ export default function GerenciarUsuario({ admin }) {
               </div>
 
               <div style={styles.inputGroupHalf}>
-                <label style={styles.label}>DATA DE CADASTRO</label>
+                <label htmlFor="profile-created-at" style={styles.label}>DATA DE CADASTRO</label>
                 <input
+                  id="profile-created-at"
                   type="text"
                   value={dataCadastroFormatada}
                   placeholder="Ex: 15/01/2024"
@@ -95,8 +101,9 @@ export default function GerenciarUsuario({ admin }) {
 
             <div style={styles.row3Cols}>
               <div style={styles.inputGroupThird}>
-                <label style={styles.label}>SENHA ATUAL</label>
+                <label htmlFor="current-password" style={styles.label}>SENHA ATUAL</label>
                 <input
+                  id="current-password"
                   type="password"
                   name="currentPass"
                   placeholder="••••••••"
@@ -111,14 +118,18 @@ export default function GerenciarUsuario({ admin }) {
               </div>
 
               <div style={styles.inputGroupThird}>
-                <label style={styles.label}>NOVA SENHA</label>
+                <label htmlFor="new-password" style={styles.label}>NOVA SENHA</label>
                 <input
+                  id="new-password"
                   type="password"
                   name="newPass"
                   placeholder="Mínimo 8 caracteres"
                   style={styles.input}
                   required
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
                 />
+                <PasswordRequirements password={newPassword} />
                 {passState?.errors?.newPass && (
                   <span style={{ color: 'red', fontSize: '12px' }}>
                     {passState.errors.newPass[0]}
@@ -127,8 +138,9 @@ export default function GerenciarUsuario({ admin }) {
               </div>
 
               <div style={styles.inputGroupThird}>
-                <label style={styles.label}>CONFIRMAR NOVA SENHA</label>
+                <label htmlFor="confirm-password" style={styles.label}>CONFIRMAR NOVA SENHA</label>
                 <input
+                  id="confirm-password"
                   type="password"
                   name="confirmPass"
                   placeholder="Mínimo 8 caracteres"
@@ -143,7 +155,7 @@ export default function GerenciarUsuario({ admin }) {
               </div>
             </div>
 
-            <button type="submit" disabled={isPendingPass} className="admin-submit-btn">
+            <button type="submit" disabled={isPendingPass || !isStrongPassword(newPassword)} className="admin-submit-btn">
               {isPendingPass ? 'Alterando...' : 'Alterar Senha'}
             </button>
           </form>
