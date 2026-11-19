@@ -19,6 +19,7 @@ export default function CardPublicacao({ item, basePath = "/noticias" }) {
         ) : (
           <div style={styles.imagePlaceholder} />
         )}
+        <span style={styles.categoryBadge}>Notícias</span>
       </div>
 
       <div style={styles.contentWrapper}>
@@ -51,6 +52,7 @@ const styles = {
     minWidth: "280px",
     height: "auto",
     backgroundColor: "#e5e7eb",
+    position: "relative",
   },
   image: {
     width: "100%",
@@ -62,6 +64,16 @@ const styles = {
     width: "100%",
     height: "100%",
     backgroundColor: "#d1d5db",
+  },
+  categoryBadge: {
+    position: "absolute",
+    right: "12px",
+    bottom: "12px",
+    backgroundColor: "#740405",
+    color: "#ffffff",
+    padding: "5px 10px",
+    fontSize: "11px",
+    fontWeight: "700",
   },
   contentWrapper: {
     padding: "32px 36px",
